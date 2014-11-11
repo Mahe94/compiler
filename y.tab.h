@@ -45,19 +45,27 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUMBER = 258,
-    TOKHEAT = 259,
-    STATE = 260,
-    TOKTARGET = 261,
-    TOKTEMPERATURE = 262
+    DIGIT = 258,
+    PLUS = 259,
+    MINUS = 260,
+    MUL = 261,
+    DIV = 262,
+    MOD = 263,
+    LEFT = 264,
+    RIGHT = 265,
+    END = 266
   };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define TOKHEAT 259
-#define STATE 260
-#define TOKTARGET 261
-#define TOKTEMPERATURE 262
+#define DIGIT 258
+#define PLUS 259
+#define MINUS 260
+#define MUL 261
+#define DIV 262
+#define MOD 263
+#define LEFT 264
+#define RIGHT 265
+#define END 266
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
