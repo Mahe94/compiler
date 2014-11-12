@@ -47,25 +47,13 @@ extern int yydebug;
   {
     DIGIT = 258,
     PLUS = 259,
-    MINUS = 260,
-    MUL = 261,
-    DIV = 262,
-    MOD = 263,
-    LEFT = 264,
-    RIGHT = 265,
-    END = 266
+    END = 260
   };
 #endif
 /* Tokens.  */
 #define DIGIT 258
 #define PLUS 259
-#define MINUS 260
-#define MUL 261
-#define DIV 262
-#define MOD 263
-#define LEFT 264
-#define RIGHT 265
-#define END 266
+#define END 260
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED

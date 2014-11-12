@@ -20,19 +20,21 @@ main()
 
 %} 
 
-%token DIGIT PLUS MINUS MUL DIV MOD LEFT RIGHT END 
+%right '='
+%left '+' '-'
+%left '*' '/'
+%token DIGIT PLUS END
 	 
 %% 
 
-start : expr END           {printf("%d\n", $1); return 1;} 
+start : expr '\n'      {printf("%d\n",$$); return 1;} 
     ; 
 
-expr: expr PLUS expr	{$$ = $1 + $3;} 
-    | expr MINUS expr	{$$ = $1 - $3;} 
-    | expr MUL expr	{$$ = $1 * $3;}
-    | expr DIV expr	{$$ = $1 / $3;}
-    | expr MOD expr	{$$ = $1 -(($1/$3)*$3);}
-    | LEFT expr RIGHT	{$$ = $2;}
+expr: expr '+' expr	{$$ = $1 + $3;} 
+    | expr '-' expr	{$$ = $1 - $3;} 
+    | expr '*' expr	{$$ = $1 * $3;}
+    | expr '/' expr	{$$ = $1 / $3;}
+    | '(' expr ')'	{$$ = $2;}
     | DIGIT             {$$ = $1;} 
     ; 
 

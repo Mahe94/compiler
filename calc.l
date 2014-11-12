@@ -6,13 +6,10 @@
 %% 
 
 [0-9]+	{yylval=atoi(yytext); return DIGIT;}
-";"	return END;
-\-	return MINUS;
-\+	return PLUS;
-\*	return MUL;		
-\/	return DIV;
-\(	return LEFT;
-\)	return RIGHT;
-\%	return MOD;
+\+	return *yytext;
+\-	return *yytext;
+\*	return *yytext;
+\/	return *yytext;
+[\n]	{return *yytext;}
 %%
 
