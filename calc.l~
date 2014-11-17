@@ -5,11 +5,12 @@
 
 %% 
 
-[0-9]+	{yylval=atoi(yytext); return DIGIT;}
-\+	return *yytext;
-\-	return *yytext;
-\*	return *yytext;
-\/	return *yytext;
-"\n"	{return *yytext;}
+[0-9]+	{yylval.integer=atoi(yytext); return DIGIT;}
+\+	{yylval.character=*yytext; return OP;}
+\-	{yylval.character=*yytext; return OP;}
+\*	{yylval.character=*yytext; return OP;}
+\/	{yylval.character=*yytext; return OP;}
+[\n]	return *yytext;
+[\t]*	{;}
 %%
 

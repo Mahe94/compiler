@@ -738,33 +738,33 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 8 "calc.l"
-{yylval=atoi(yytext); return DIGIT;}
+{yylval.integer=atoi(yytext); return DIGIT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 9 "calc.l"
-return *yytext;
+{yylval.character=*yytext; return OP;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 10 "calc.l"
-return *yytext;
+{yylval.character=*yytext; return OP;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 11 "calc.l"
-return *yytext;
+{yylval.character=*yytext; return OP;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 12 "calc.l"
-return *yytext;
+{yylval.character=*yytext; return OP;}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
 #line 13 "calc.l"
-{return *yytext;}
+return *yytext;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP

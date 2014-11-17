@@ -46,18 +46,25 @@ extern int yydebug;
   enum yytokentype
   {
     DIGIT = 258,
-    PLUS = 259,
-    END = 260
+    OP = 259
   };
 #endif
 /* Tokens.  */
 #define DIGIT 258
-#define PLUS 259
-#define END 260
+#define OP 259
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE YYSTYPE;
+union YYSTYPE
+{
+#line 8 "calc.y" /* yacc.c:1909  */
+
+	char character;
+	int integer;
+
+#line 67 "y.tab.h" /* yacc.c:1909  */
+};
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

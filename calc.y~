@@ -2,8 +2,34 @@
 
 	#include<stdio.h> 
 	#include<string.h>
+	
+%} 
 
-void yyerror(const char *str)
+%union {
+	char character;
+	int integer;
+};
+
+%token <integer> DIGIT 
+%token <character> OP 
+
+%type <integer> expr
+	 
+%% 
+
+start : expr '\n'      {;} 
+    ; 
+
+expr: expr OP expr { printf("%c %d %d", $2, $1, $3);}
+    | '(' expr ')'	{$$ = $2;}
+    | DIGIT             {$$ = $1;} 
+    ; 
+
+%%     
+
+#include "lex.yy.c"
+
+yyerror(const char *str)
 {
         fprintf(stderr,"error: %s\n",str);
 }
@@ -18,24 +44,3 @@ main()
     yyparse(); 
 } 
 
-%} 
-
-%right '='
-%left '+' '-'
-%left '*' '/'
-%token DIGIT PLUS END
-	 
-%% 
-
-start : expr END      {printf("%d\n",$$); return 1;} 
-    ; 
-
-expr: expr '+' expr	{$$ = $1 + $3;} 
-    | expr '-' expr	{$$ = $1 - $3;} 
-    | expr '*' expr	{$$ = $1 * $3;}
-    | expr '/' expr	{$$ = $1 / $3;}
-    | '(' expr ')'	{$$ = $2;}
-    | DIGIT             {$$ = $1;} 
-    ; 
-
-%%     
