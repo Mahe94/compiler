@@ -45,25 +45,22 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DIGIT = 258,
-    OP = 259
+    DIGIT = 258
   };
 #endif
 /* Tokens.  */
 #define DIGIT 258
-#define OP 259
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 8 "calc.y" /* yacc.c:1909  */
+#line 15 "calc.y" /* yacc.c:1909  */
 
-	char character;
-	int integer;
+	struct node *n;	
 
-#line 67 "y.tab.h" /* yacc.c:1909  */
+#line 64 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
