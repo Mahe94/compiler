@@ -25,7 +25,7 @@
 	 
 %% 
 
-start : expr '\n'     	{ return 0;} 
+start : expr '\n'     	{inorder($1); printf("\n%d\n", $1->integer); return 0;} 
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -52,12 +52,23 @@ expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
 
 #include "lex.yy.c"
 
+int compute(char c, int a, int b) {
+	switch(c) {
+		case '+': return (a+b);
+		case '-': return (a-b);
+		case '*': return (a*b);
+		case '/': return (a/b);
+	}
+	return 0;
+}
+
 int leaf(struct node *n) {
 	if(n->right==NULL && n->left==NULL)
 		return 1;
 	else
 		return 0;
 }
+
 void inorder(struct node *n) {
 	if(leaf(n)) {
 		printf("%d ", n->integer);
@@ -68,6 +79,7 @@ void inorder(struct node *n) {
 		printf("%c ", n->character);
 		inorder(n->right);
 		printf(") ");
+		n->integer = compute(n->character, n->left->integer, n->right-integer);
 	}
 }
 

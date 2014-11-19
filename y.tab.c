@@ -1213,7 +1213,7 @@ yyreduce:
     {
         case 2:
 #line 28 "calc.y" /* yacc.c:1646  */
-    {inorder((yyvsp[-1].n)); return 0;}
+    {inorder((yyvsp[-1].n)); printf("\n%d\n", (yyvsp[-1].n)->integer); return 0;}
 #line 1218 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1499,12 +1499,23 @@ yyreturn:
 
 #include "lex.yy.c"
 
+int compute(char c, int a, int b) {
+	switch(c) {
+		case '+': return (a+b);
+		case '-': return (a-b);
+		case '*': return (a*b);
+		case '/': return (a/b);
+	}
+	return 0;
+}
+
 int leaf(struct node *n) {
 	if(n->right==NULL && n->left==NULL)
 		return 1;
 	else
 		return 0;
 }
+
 void inorder(struct node *n) {
 	if(leaf(n)) {
 		printf("%d ", n->integer);
@@ -1515,6 +1526,7 @@ void inorder(struct node *n) {
 		printf("%c ", n->character);
 		inorder(n->right);
 		printf(") ");
+		n->integer = compute(n->character, n->left->integer, n->right->integer);
 	}
 }
 
