@@ -10,6 +10,15 @@
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return DIGIT;}
+"stop"	{	return STOP;}	
+"write"	{	return WRITE;}
+"read"	{	return READ;}
+[a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
+		yylval.n->character=yytext[1]; 
+		yylval.n->right=NULL;
+		yylval.n->left=NULL;
+		return ID;}	
+\=	{	return *yytext;}
 \+	{	return *yytext;}
 \-	{	return *yytext;}
 \*	{	return *yytext;}
