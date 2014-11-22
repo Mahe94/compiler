@@ -12,6 +12,7 @@
 	
 	void inorder(struct node *n);
 	void start(struct node *n);
+	int getloc(struct node *n);
 	
 	int array[26];	
 	int loc;
@@ -119,19 +120,32 @@ void inorder(struct node *n) {
 }
 */
 
+int getloc(struct node *n) {
+	return (n->character)-97;
+}
+
 void start(struct node *n) {
 	if(!leaf(n)) {
 		switch(n->type) {
 			case 0:	start(n->left);
 				start(n->right);
-				n->integer = compute(n->character, n->left->integer, n->right->integer);
+				if(n->left->type==3 && n->right->type==3)
+					n->integer = compute(n->character, array[getloc(n->left)], array[getloc(n->right)]);
+				else
+					if(n->left->type==3)
+						n->integer = compute(n->character, array[getloc(n->left)], n->right->integer);
+					else
+						if(n->right->type==3)
+							n->integer = compute(n->character, n->left->integer, array[getloc(n->right)]);
+						else
+							n->integer = compute(n->character, n->left->integer, n->right->integer);
 				break;
 			
 			case 3:	
 				loc = (n->left->character)-97;
 				start(n->right);
 				if(n->right->type==3)
-					array[loc] = array[(n->right->character)-97];
+					array[loc] = array[getloc(n->right)];
 				else
 					array[loc] = n->right->integer;
 				printf("%d\n", array[loc]);
