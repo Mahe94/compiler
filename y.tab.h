@@ -64,7 +64,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 19 "calc.y" /* yacc.c:1909  */
+#line 20 "calc.y" /* yacc.c:1909  */
 
 	struct node *n;	
 

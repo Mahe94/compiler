@@ -14,7 +14,7 @@
 "write"	{	return WRITE;}
 "read"	{	return READ;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
-		yylval.n->character=yytext[1]; 
+		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return ID;}	

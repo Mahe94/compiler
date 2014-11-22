@@ -778,7 +778,7 @@ case 5:
 YY_RULE_SETUP
 #line 16 "calc.l"
 {	yylval.n = (struct node*)malloc(sizeof(struct node));
-		yylval.n->character=yytext[1]; 
+		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return ID;}	
