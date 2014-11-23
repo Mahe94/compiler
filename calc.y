@@ -2,6 +2,7 @@
 
 	#include<stdio.h> 
 	#include<string.h>
+	#include<stdlib.h>
 	
 	struct node {
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
@@ -16,6 +17,7 @@
 	
 	int array[26];	
 	int loc;
+	int val;
 %} 
 
 %union {
@@ -33,7 +35,6 @@
 
 Start : Slist		{$$=(struct node*)malloc(sizeof(struct node));
 			$$=$1;
-			start($$);
 			return 0;}
 	;
 	
@@ -48,13 +49,18 @@ Slist : Stmt Slist 	{$$=(struct node*)malloc(sizeof(struct node));
 Stmt : ID '=' expr '\n'     	{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=3;
 				$$->right=$3;
-				$$->left=$1;} 
-	| READ '(' ID ')' '\n'	{$$=(struct node*)malloc(sizeof(struct node));
+				$$->left=$1;
+				start($$);} 
+	| READ '(' ID ')' '\n'	DIGIT '\n'
+				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=1;
-				$$->left=$3;}
+				$$->left=$3;
+				$$->right=$6;
+				start($$);}
 	| WRITE '(' expr ')' '\n'	{$$=(struct node*)malloc(sizeof(struct node));
 					$$->type=2;
-					$$->left=$3;}
+					$$->left=$3;
+					start($$);}
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -140,7 +146,19 @@ void start(struct node *n) {
 						else
 							n->integer = compute(n->character, n->left->integer, n->right->integer);
 				break;
-			
+			case 1:
+				loc = getloc(n->left);
+				array[loc] = n->right->integer;
+				printf("%d\n", array[loc]);
+				break;
+			case 2:
+				if(n->left->type==3)
+					printf("%d\n", array[getloc(n->left)]);
+				else {
+					start(n->left);
+					printf("%d\n", n->left->integer);
+				}
+				break;
 			case 3:	
 				loc = (n->left->character)-97;
 				start(n->right);
