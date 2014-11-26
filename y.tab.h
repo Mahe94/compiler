@@ -52,7 +52,10 @@ extern int yydebug;
     IF = 262,
     THEN = 263,
     ENDIF = 264,
-    ELSE = 265
+    ELSE = 265,
+    WHILE = 266,
+    DO = 267,
+    ENDWHILE = 268
   };
 #endif
 /* Tokens.  */
@@ -64,6 +67,9 @@ extern int yydebug;
 #define THEN 263
 #define ENDIF 264
 #define ELSE 265
+#define WHILE 266
+#define DO 267
+#define ENDWHILE 268
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -74,7 +80,7 @@ union YYSTYPE
 
 	struct node *n;	
 
-#line 78 "y.tab.h" /* yacc.c:1909  */
+#line 84 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

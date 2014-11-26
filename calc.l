@@ -16,6 +16,9 @@
 "then"	{	return THEN;}
 "else"	{	return ELSE;}
 "endif"	{	return ENDIF;}
+"while" {	return WHILE;}
+"do"	{	return DO;}
+"endwhile" {	return ENDWHILE;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;

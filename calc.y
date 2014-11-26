@@ -28,7 +28,7 @@
 %left '+' '-'
 %left '*' '/'
 %left '<' '>'
-%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE
+%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE
 
 %type <n> expr Stmt Slist Start
 	 
@@ -70,6 +70,12 @@ Stmt : ID '=' expr '\n'     	{$$=(struct node*)malloc(sizeof(struct node));
 				$$->middle=$7;
 				$$->right=$10;
 				}
+				
+	|WHILE '(' expr ')' DO '\n' Slist ENDWHILE '\n'
+				{$$=(struct node*)malloc(sizeof(struct node));
+				$$->type=5;
+				$$->left=$3;
+				$$->right=$7;}
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -193,7 +199,6 @@ void start(struct node *n) {
 					array[loc] = array[getloc(n->right)];
 				else
 					array[loc] = n->right->integer;
-				printf("%d\n", array[loc]);
 				break;
 				
 			case 4:
@@ -206,6 +211,13 @@ void start(struct node *n) {
 				
 				break;
 			
+			case 5:
+				start(n->left);
+				if(n->left->integer == 1) {
+					start(n->right);
+					start(n);
+				}
+				break;
 			case 100:
 				start(n->left);
 				if(n->right!=NULL)
