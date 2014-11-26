@@ -8,7 +8,7 @@
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
 		char character;
 		int integer;
-		struct node *right, *left;
+		struct node *right, *middle, *left;
 	};
 	
 	void inorder(struct node *n);
@@ -35,6 +35,7 @@
 
 Start : Slist		{$$=(struct node*)malloc(sizeof(struct node));
 			$$=$1;
+			start($$);
 			return 0;}
 	;
 	
@@ -49,18 +50,14 @@ Slist : Stmt Slist 	{$$=(struct node*)malloc(sizeof(struct node));
 Stmt : ID '=' expr '\n'     	{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=3;
 				$$->right=$3;
-				$$->left=$1;
-				start($$);} 
-	| READ '(' ID ')' '\n'	DIGIT '\n'
+				$$->left=$1;} 
+	| READ '(' ID ')' '\n'
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=1;
-				$$->left=$3;
-				$$->right=$6;
-				start($$);}
+				$$->left=$3;}
 	| WRITE '(' expr ')' '\n'	{$$=(struct node*)malloc(sizeof(struct node));
 					$$->type=2;
-					$$->left=$3;
-					start($$);}
+					$$->left=$3;}
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -148,8 +145,8 @@ void start(struct node *n) {
 				break;
 			case 1:
 				loc = getloc(n->left);
-				array[loc] = n->right->integer;
-				printf("%d\n", array[loc]);
+				scanf("%d", &val);
+				array[loc] = val;
 				break;
 			case 2:
 				if(n->left->type==3)

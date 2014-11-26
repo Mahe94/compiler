@@ -10,8 +10,9 @@
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return DIGIT;}
+"stop"	{	return STOP;}	
 "write"	{	return WRITE;}
-"read"	{	return READ;}
+"read"	{	return READ;}}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
