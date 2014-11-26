@@ -8,7 +8,7 @@
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
 		char character;
 		int integer;
-		struct node *right, *left;
+		struct node *right, *middle, *left;
 	};
 	
 	void inorder(struct node *n);
@@ -27,7 +27,8 @@
 %right '='
 %left '+' '-'
 %left '*' '/'
-%token <n> DIGIT READ WRITE STOP ID
+%left '<' '>'
+%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE
 
 %type <n> expr Stmt Slist Start
 	 
@@ -44,20 +45,31 @@ Slist : Stmt Slist 	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->left=$1;
 			$$->right=$2;
 			}
-	| STOP		{$$=NULL;}
+	| '\n'		{$$=NULL;}
 	;
 
 Stmt : ID '=' expr '\n'     	{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=3;
 				$$->right=$3;
 				$$->left=$1;} 
+				
 	| READ '(' ID ')' '\n'
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=1;
 				$$->left=$3;}
-	| WRITE '(' expr ')' '\n'	{$$=(struct node*)malloc(sizeof(struct node));
-					$$->type=2;
-					$$->left=$3;}
+				
+	| WRITE '(' expr ')' '\n'	
+				{$$=(struct node*)malloc(sizeof(struct node));
+				$$->type=2;
+				$$->left=$3;}
+	
+	|IF '(' expr ')' THEN '\n' Slist ELSE '\n' Slist ENDIF '\n'
+				{$$=(struct node*)malloc(sizeof(struct node));
+				$$->type=4;
+				$$->left=$3;
+				$$->middle=$7;
+				$$->left=$10;
+				}
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -79,7 +91,22 @@ expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
 			$$->character='/';
 			$$->right=$3;
-			$$->left=$1;}		       
+			$$->left=$1;}
+	|expr '<' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='<';
+			$$->right=$3;
+			$$->left=$1;}	
+	|expr '>' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='>';
+			$$->right=$3;
+			$$->left=$1;}
+	|expr '=''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='=';
+			$$->right=$4;
+			$$->left=$1;}	       
 	| '(' expr ')'	{$$=$2;}
 	| DIGIT         {$$=$1;} 
 	| ID		{$1->type=3;
@@ -96,6 +123,9 @@ int compute(char c, int a, int b) {
 		case '-': return (a-b);
 		case '*': return (a*b);
 		case '/': return (a/b);
+		case '<': return (a<b);
+		case '>': return (a>b);
+		case '=': return (a==b);
 	}
 	return 0;
 }
@@ -166,6 +196,16 @@ void start(struct node *n) {
 				printf("%d\n", array[loc]);
 				break;
 				
+			case 4:
+				start(n->left);
+				if(n->left->integer == 1) 
+					start(n->middle);	
+				
+				else	
+					start(n->right);
+				
+				break;
+			
 			case 100:
 				start(n->left);
 				if(n->right!=NULL)

@@ -48,16 +48,22 @@ extern int yydebug;
     DIGIT = 258,
     READ = 259,
     WRITE = 260,
-    STOP = 261,
-    ID = 262
+    ID = 261,
+    IF = 262,
+    THEN = 263,
+    ENDIF = 264,
+    ELSE = 265
   };
 #endif
 /* Tokens.  */
 #define DIGIT 258
 #define READ 259
 #define WRITE 260
-#define STOP 261
-#define ID 262
+#define ID 261
+#define IF 262
+#define THEN 263
+#define ENDIF 264
+#define ELSE 265
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -68,7 +74,7 @@ union YYSTYPE
 
 	struct node *n;	
 
-#line 72 "y.tab.h" /* yacc.c:1909  */
+#line 78 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

@@ -9,10 +9,13 @@
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
-		return DIGIT;}
-"stop"	{	return STOP;}	
+		return DIGIT;}	
 "write"	{	return WRITE;}
 "read"	{	return READ;}
+"if"	{	return IF;}
+"then"	{	return THEN;}
+"else"	{	return ELSE;}
+"endif"	{	return ENDIF;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
@@ -23,6 +26,8 @@
 \-	{	return *yytext;}
 \*	{	return *yytext;}
 \/	{	return *yytext;}
+\<	{	return *yytext;}
+\>	{	return *yytext;}
 \(	return *yytext;
 \)	return *yytext;
 [\n]	return *yytext;

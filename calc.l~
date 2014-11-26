@@ -12,7 +12,11 @@
 		return DIGIT;}
 "stop"	{	return STOP;}	
 "write"	{	return WRITE;}
-"read"	{	return READ;}}
+"read"	{	return READ;}
+"if"	{	return IF;}
+"then"	{	return THEN;}
+"else"	{	return ELSE;}
+"endif"	{	return ENDIF;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
@@ -23,6 +27,8 @@
 \-	{	return *yytext;}
 \*	{	return *yytext;}
 \/	{	return *yytext;}
+\<	{	return *yytext;}
+\>	{	return *yytext;}
 \(	return *yytext;
 \)	return *yytext;
 [\n]	return *yytext;
