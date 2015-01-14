@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 1 "calc.y" /* yacc.c:339  */
+#line 1 "sim.y" /* yacc.c:339  */
  
 
 	#include<stdio.h> 
@@ -83,8 +83,13 @@
 	int array[26];	
 	int loc;
 	int val;
+	
+	FILE *fp=NULL;
+	
+	int avail_reg=0;
+	
 
-#line 88 "y.tab.c" /* yacc.c:339  */
+#line 93 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -150,11 +155,11 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 23 "calc.y" /* yacc.c:355  */
+#line 28 "sim.y" /* yacc.c:355  */
 
 	struct node *n;	
 
-#line 158 "y.tab.c" /* yacc.c:355  */
+#line 163 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -169,7 +174,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 173 "y.tab.c" /* yacc.c:358  */
+#line 178 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -467,8 +472,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    37,    37,    43,    48,    51,    56,    61,    66,    74,
-      81,    86,    91,    96,   101,   106,   111,   116,   117,   118
+       0,    42,    42,    52,    57,    60,    65,    70,    75,    83,
+      90,    95,   100,   105,   110,   115,   120,   125,   126,   128
 };
 #endif
 
@@ -1276,166 +1281,171 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 37 "calc.y" /* yacc.c:1646  */
+#line 42 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)=(yyvsp[0].n);
+			fp = fopen("output", "w+");	
+			fprintf(fp, "START\n");
 			start((yyval.n));
+			fprintf(fp, "HALT");
+			fclose(fp);
 			return 0;}
-#line 1285 "y.tab.c" /* yacc.c:1646  */
+#line 1294 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 43 "calc.y" /* yacc.c:1646  */
+#line 52 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=100;
 			(yyval.n)->left=(yyvsp[-1].n);
 			(yyval.n)->right=(yyvsp[0].n);
 			}
-#line 1295 "y.tab.c" /* yacc.c:1646  */
+#line 1304 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 48 "calc.y" /* yacc.c:1646  */
+#line 57 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=NULL;}
-#line 1301 "y.tab.c" /* yacc.c:1646  */
+#line 1310 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 51 "calc.y" /* yacc.c:1646  */
+#line 60 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 				(yyval.n)->type=3;
 				(yyval.n)->right=(yyvsp[-1].n);
 				(yyval.n)->left=(yyvsp[-3].n);}
-#line 1310 "y.tab.c" /* yacc.c:1646  */
+#line 1319 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 57 "calc.y" /* yacc.c:1646  */
+#line 66 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 				(yyval.n)->type=1;
 				(yyval.n)->left=(yyvsp[-2].n);}
-#line 1318 "y.tab.c" /* yacc.c:1646  */
+#line 1327 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 62 "calc.y" /* yacc.c:1646  */
+#line 71 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 				(yyval.n)->type=2;
 				(yyval.n)->left=(yyvsp[-2].n);}
-#line 1326 "y.tab.c" /* yacc.c:1646  */
+#line 1335 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 67 "calc.y" /* yacc.c:1646  */
+#line 76 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 				(yyval.n)->type=4;
 				(yyval.n)->left=(yyvsp[-9].n);
 				(yyval.n)->middle=(yyvsp[-5].n);
 				(yyval.n)->right=(yyvsp[-2].n);
 				}
-#line 1337 "y.tab.c" /* yacc.c:1646  */
+#line 1346 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 75 "calc.y" /* yacc.c:1646  */
+#line 84 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 				(yyval.n)->type=5;
 				(yyval.n)->left=(yyvsp[-6].n);
 				(yyval.n)->right=(yyvsp[-2].n);}
-#line 1346 "y.tab.c" /* yacc.c:1646  */
+#line 1355 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 81 "calc.y" /* yacc.c:1646  */
+#line 90 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='+';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1356 "y.tab.c" /* yacc.c:1646  */
+#line 1365 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 86 "calc.y" /* yacc.c:1646  */
+#line 95 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
     			(yyval.n)->type=0;
 			(yyval.n)->character='-';
     			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1366 "y.tab.c" /* yacc.c:1646  */
+#line 1375 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 91 "calc.y" /* yacc.c:1646  */
+#line 100 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='*';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1376 "y.tab.c" /* yacc.c:1646  */
+#line 1385 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 96 "calc.y" /* yacc.c:1646  */
+#line 105 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='/';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1386 "y.tab.c" /* yacc.c:1646  */
+#line 1395 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 101 "calc.y" /* yacc.c:1646  */
+#line 110 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='<';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1396 "y.tab.c" /* yacc.c:1646  */
+#line 1405 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 106 "calc.y" /* yacc.c:1646  */
+#line 115 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='>';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-2].n);}
-#line 1406 "y.tab.c" /* yacc.c:1646  */
+#line 1415 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 111 "calc.y" /* yacc.c:1646  */
+#line 120 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(struct node*)malloc(sizeof(struct node));
 			(yyval.n)->type=0;
 			(yyval.n)->character='=';
 			(yyval.n)->right=(yyvsp[0].n);
 			(yyval.n)->left=(yyvsp[-3].n);}
-#line 1416 "y.tab.c" /* yacc.c:1646  */
+#line 1425 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 116 "calc.y" /* yacc.c:1646  */
+#line 125 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=(yyvsp[-1].n);}
-#line 1422 "y.tab.c" /* yacc.c:1646  */
+#line 1431 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 117 "calc.y" /* yacc.c:1646  */
-    {(yyval.n)=(yyvsp[0].n);}
-#line 1428 "y.tab.c" /* yacc.c:1646  */
+#line 126 "sim.y" /* yacc.c:1646  */
+    {(yyvsp[0].n)->type=6;
+			(yyval.n)=(yyvsp[0].n);}
+#line 1438 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 118 "calc.y" /* yacc.c:1646  */
+#line 128 "sim.y" /* yacc.c:1646  */
     {(yyvsp[0].n)->type=3;
 			(yyval.n)=(yyvsp[0].n);}
-#line 1435 "y.tab.c" /* yacc.c:1646  */
+#line 1445 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1439 "y.tab.c" /* yacc.c:1646  */
+#line 1449 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1663,17 +1673,21 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 122 "calc.y" /* yacc.c:1906  */
+#line 132 "sim.y" /* yacc.c:1906  */
      
 
 #include "lex.yy.c"
 
 int compute(char c, int a, int b) {
 	switch(c) {
-		case '+': return (a+b);
-		case '-': return (a-b);
-		case '*': return (a*b);
-		case '/': return (a/b);
+		case '+': fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a+b);
+		case '-': fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a-b);
+		case '*': fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a*b);
+		case '/': fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a/b);
 		case '<': return (a<b);
 		case '>': return (a>b);
 		case '=': return (a==b);
@@ -1709,41 +1723,94 @@ int getloc(struct node *n) {
 }
 
 void start(struct node *n) {
+//	printf("STARTED\n");
+//	scanf("%d", avail_reg);
 	if(!leaf(n)) {
 		switch(n->type) {
-			case 0:	start(n->left);
-				start(n->right);
-				if(n->left->type==3 && n->right->type==3)
+			case 0:	
+//				start(n->left);
+//				start(n->right);
+				if(n->left->type==3 && n->right->type==3) {
+					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
+					fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, getloc(n->right));
 					n->integer = compute(n->character, array[getloc(n->left)], array[getloc(n->right)]);
-				else
-					if(n->left->type==3)
-						n->integer = compute(n->character, array[getloc(n->left)], n->right->integer);
-					else
-						if(n->right->type==3)
-							n->integer = compute(n->character, n->left->integer, array[getloc(n->right)]);
-						else
+				}
+				else {
+					if(n->left->type==3) {
+						if(n->right->type==6) 
+							fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->right->integer);
+						else {
+							++avail_reg;
+							start(n->right);
+							--avail_reg;
+						}
+						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
+//						fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
+						n->integer = compute(n->character, array[getloc(n->left)], n->right->integer);	
+					}
+					else {
+						if(n->right->type==3) {
+							if(n->left->type==6) 
+								fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->left->integer);
+							else {
+								++avail_reg;
+								start(n->left);
+								--avail_reg;
+							}
+							fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
+//							fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
+							n->integer = compute(n->character, n->left->integer, array[getloc(n->right)]);	
+						}
+						else {
+							if(n->left->type==6)
+								fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
+							else
+								start(n->left);
+							++avail_reg;
+							if(n->right->type==6) 
+								fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
+							else 
+								start(n->right);
+							--avail_reg;
 							n->integer = compute(n->character, n->left->integer, n->right->integer);
+						}
+					}
+				}
 				break;
 			case 1:
 				loc = getloc(n->left);
 				scanf("%d", &val);
-				array[loc] = val;
+ 				array[loc] = val;
+				fprintf(fp, "IN R%d\n", avail_reg);
+				fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
 				break;
 			case 2:
-				if(n->left->type==3)
+				if(n->left->type==3) {
 					printf("%d\n", array[getloc(n->left)]);
+					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+					fprintf(fp, "OUT R%d\n", avail_reg);
+				}
 				else {
 					start(n->left);
+					fprintf(fp, "OUT R%d\n", avail_reg);
 					printf("%d\n", n->left->integer);
 				}
 				break;
 			case 3:	
 				loc = (n->left->character)-97;
 				start(n->right);
-				if(n->right->type==3)
+				if(n->right->type==3) {
 					array[loc] = array[getloc(n->right)];
-				else
+					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
+					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
+				}
+				else {
+//					++avail_reg;
 					array[loc] = n->right->integer;
+//					--avail_reg;
+//					fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
+					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
+				}
 				break;
 				
 			case 4:

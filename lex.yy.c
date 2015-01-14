@@ -486,8 +486,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "calc.l"
-#line 2 "calc.l"
+#line 1 "sim.l"
+#line 2 "sim.l"
 	#include <stdio.h>
 	#include "y.tab.h"
 #line 494 "lex.yy.c"
@@ -677,7 +677,7 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 6 "calc.l"
+#line 6 "sim.l"
 
 
 #line 684 "lex.yy.c"
@@ -765,7 +765,7 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 8 "calc.l"
+#line 8 "sim.l"
 {	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
@@ -774,52 +774,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 13 "calc.l"
+#line 13 "sim.l"
 {	return WRITE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 14 "calc.l"
+#line 14 "sim.l"
 {	return READ;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 15 "calc.l"
+#line 15 "sim.l"
 {	return IF;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 16 "calc.l"
+#line 16 "sim.l"
 {	return THEN;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 17 "calc.l"
+#line 17 "sim.l"
 {	return ELSE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 18 "calc.l"
+#line 18 "sim.l"
 {	return ENDIF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 19 "calc.l"
+#line 19 "sim.l"
 {	return WHILE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 20 "calc.l"
+#line 20 "sim.l"
 {	return DO;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 21 "calc.l"
+#line 21 "sim.l"
 {	return ENDWHILE;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 22 "calc.l"
+#line 22 "sim.l"
 {	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->character=yytext[0]; 
 		yylval.n->right=NULL;
@@ -828,58 +828,58 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 27 "calc.l"
+#line 27 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 28 "calc.l"
+#line 28 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 29 "calc.l"
+#line 29 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 30 "calc.l"
+#line 30 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 31 "calc.l"
+#line 31 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 32 "calc.l"
+#line 32 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 33 "calc.l"
+#line 33 "sim.l"
 {	return *yytext;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 34 "calc.l"
+#line 34 "sim.l"
 return *yytext;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 35 "calc.l"
+#line 35 "sim.l"
 return *yytext;
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 36 "calc.l"
+#line 36 "sim.l"
 return *yytext;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 37 "calc.l"
+#line 37 "sim.l"
 ECHO;
 	YY_BREAK
 #line 886 "lex.yy.c"
@@ -1880,7 +1880,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 37 "calc.l"
+#line 37 "sim.l"
 
 
 
