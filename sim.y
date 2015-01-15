@@ -21,7 +21,7 @@
 	
 	FILE *fp=NULL;
 	
-	int avail_reg=0;
+	int avail_reg=0, avail_l=0, l1, l2;
 	
 %} 
 
@@ -30,9 +30,9 @@
 }
 
 %right '='
+%left '<' '>'
 %left '+' '-'
 %left '*' '/'
-%left '<' '>'
 %token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE
 
 %type <n> expr Stmt Slist Start
@@ -117,15 +117,30 @@ expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->character='>';
 			$$->right=$3;
 			$$->left=$1;}
+	|expr '!''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='!';
+			$$->right=$4;
+			$$->left=$1;}
 	|expr '=''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
 			$$->character='=';
 			$$->right=$4;
-			$$->left=$1;}	       
+			$$->left=$1;}
+	|expr '<''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='l';
+			$$->right=$4;
+			$$->left=$1;}	  
+	|expr '>''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+			$$->type=0;
+			$$->character='g';
+			$$->right=$4;
+			$$->left=$1;}     
 	| '(' expr ')'	{$$=$2;}
 	| DIGIT         {$1->type=6;
 			$$=$1;} 
-	| ID		{$1->type=3;
+	| ID		{$1->type=7;
 			$$=$1;}
 ; 
 
@@ -143,9 +158,18 @@ int compute(char c, int a, int b) {
 			return (a*b);
 		case '/': fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
 			return (a/b);
-		case '<': return (a<b);
-		case '>': return (a>b);
-		case '=': return (a==b);
+		case '<': fprintf(fp, "LT R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a<b);
+		case '>': fprintf(fp, "GT R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a>b);
+		case '!': fprintf(fp, "NE R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a==b);
+		case '=': fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a==b);
+		case 'l': fprintf(fp, "LE R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a<=b);
+		case 'g': fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
+			return (a>=b);
 	}
 	return 0;
 }
@@ -185,13 +209,13 @@ void start(struct node *n) {
 			case 0:	
 //				start(n->left);
 //				start(n->right);
-				if(n->left->type==3 && n->right->type==3) {
+				if(n->left->type==7 && n->right->type==7) {
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, getloc(n->right));
 					n->integer = compute(n->character, array[getloc(n->left)], array[getloc(n->right)]);
 				}
 				else {
-					if(n->left->type==3) {
+					if(n->left->type==7) {
 						if(n->right->type==6) 
 							fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->right->integer);
 						else {
@@ -204,7 +228,7 @@ void start(struct node *n) {
 						n->integer = compute(n->character, array[getloc(n->left)], n->right->integer);	
 					}
 					else {
-						if(n->right->type==3) {
+						if(n->right->type==7) {
 							if(n->left->type==6) 
 								fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->left->integer);
 							else {
@@ -245,10 +269,15 @@ void start(struct node *n) {
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
 					fprintf(fp, "OUT R%d\n", avail_reg);
 				}
-				else {
-					start(n->left);
-					fprintf(fp, "OUT R%d\n", avail_reg);
-					printf("%d\n", n->left->integer);
+				else { if(n->left->type==6) {
+						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
+						fprintf(fp, "OUT R%d\n", avail_reg);
+					}
+					else {
+						start(n->left);
+						fprintf(fp, "OUT R%d\n", avail_reg);
+						printf("%d\n", n->left->integer);
+					}
 				}
 				break;
 			case 3:	
@@ -269,21 +298,35 @@ void start(struct node *n) {
 				break;
 				
 			case 4:
+				l1=avail_l, l2=avail_l+1;
+				avail_l+=2;
 				start(n->left);
-				if(n->left->integer == 1) 
-					start(n->middle);	
+				fprintf(fp, "JZ R%d, L%d\n", avail_reg, l1);
+				start(n->middle);
+				fprintf(fp, "JMP L%d\nL%d:\n", l2, l1);
+				start(n->right);
+				fprintf(fp, "L%d:\n", l2);
 				
-				else	
-					start(n->right);
-				
+//				if(n->left->integer == 1) 
+//					start(n->middle);	
+//				
+//				else	
+//					start(n->right);
+//				
 				break;
 			
 			case 5:
+				l1=avail_l, l2=avail_l+1;
+				avail_l+=2;
+				fprintf(fp, "L%d:\n", l1);
 				start(n->left);
-				if(n->left->integer == 1) {
-					start(n->right);
-					start(n);
-				}
+				fprintf(fp, "JZ R%d, L%d\n", avail_reg, l2);
+				start(n->right);
+//				if(n->left->integer == 1) {
+//					start(n->right);
+//					start(n);
+//				}
+				fprintf(fp, "JMP L%d\nL%d:\n", l1, l2);
 				break;
 			case 100:
 				start(n->left);
