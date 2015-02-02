@@ -1,15 +1,16 @@
 %{ 
 	#include <stdio.h>
-	#include "y.tab.h"
+	#include "y.tab.h"	
 %} 
 
 %% 
-
 [0-9]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return DIGIT;}	
+"begin"	{	return BEGINING;}
+"end"	{	return END;}
 "write"	{	return WRITE;}
 "read"	{	return READ;}
 "if"	{	return IF;}
@@ -33,6 +34,7 @@
 \>	{	return *yytext;}
 \(	return *yytext;
 \)	return *yytext;
-[\n]	return *yytext;
+";"	return *yytext;
+[\n\t' ']	{};
 %%
 

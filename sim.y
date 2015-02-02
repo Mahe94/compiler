@@ -33,14 +33,14 @@
 %left '<' '>'
 %left '+' '-'
 %left '*' '/'
-%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE
+%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE BEGINING END
 
 %type <n> expr Stmt Slist Start
 	 
 %% 
 
-Start : Slist		{$$=(struct node*)malloc(sizeof(struct node));
-			$$=$1;
+Start : BEGINING Slist END		{$$=(struct node*)malloc(sizeof(struct node));
+			$$=$2;
 			fp = fopen("output", "w+");	
 			fprintf(fp, "START\n");
 			start($$);
@@ -54,37 +54,37 @@ Slist : Stmt Slist 	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->left=$1;
 			$$->right=$2;
 			}
-	| '\n'		{$$=NULL;}
+	| 		{$$=NULL;}
 	;
 
-Stmt : ID '=' expr '\n'     	{$$=(struct node*)malloc(sizeof(struct node));
+Stmt : ID '=' expr ';'     	{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=3;
 				$$->right=$3;
 				$$->left=$1;} 
 				
-	| READ '(' ID ')' '\n'
+	| READ '(' ID ')' ';'
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=1;
 				$$->left=$3;}
 				
-	| WRITE '(' expr ')' '\n'	
+	| WRITE '(' expr ')' ';'	
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=2;
 				$$->left=$3;}
 	
-	|IF '(' expr ')' THEN '\n' Slist ELSE '\n' Slist ENDIF '\n'
+	|IF '(' expr ')' THEN  Slist ELSE  Slist ENDIF 
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=4;
 				$$->left=$3;
-				$$->middle=$7;
-				$$->right=$10;
+				$$->middle=$6;
+				$$->right=$8;
 				}
 				
-	|WHILE '(' expr ')' DO '\n' Slist ENDWHILE '\n'
+	|WHILE '(' expr ')' DO  Slist ENDWHILE 
 				{$$=(struct node*)malloc(sizeof(struct node));
 				$$->type=5;
 				$$->left=$3;
-				$$->right=$7;}
+				$$->right=$6;}
     ; 
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
@@ -258,7 +258,7 @@ void start(struct node *n) {
 				break;
 			case 1:
 				loc = getloc(n->left);
-				scanf("%d", &val);
+//				scanf("%d", &val);
  				array[loc] = val;
 				fprintf(fp, "IN R%d\n", avail_reg);
 				fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
@@ -276,7 +276,7 @@ void start(struct node *n) {
 					else {
 						start(n->left);
 						fprintf(fp, "OUT R%d\n", avail_reg);
-						printf("%d\n", n->left->integer);
+//						printf("%d\n", n->left->integer);
 					}
 				}
 				break;
