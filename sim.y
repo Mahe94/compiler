@@ -21,7 +21,7 @@
 	
 	FILE *fp=NULL;
 	
-	int avail_reg=0, avail_l=0, l1, l2;
+	int avail_reg=0, avail_l=0;
 	
 %} 
 
@@ -204,6 +204,7 @@ int getloc(struct node *n) {
 void start(struct node *n) {
 //	printf("STARTED\n");
 //	scanf("%d", avail_reg);
+	int l1, l2;
 	if(!leaf(n)) {
 		switch(n->type) {
 			case 0:	
@@ -264,8 +265,8 @@ void start(struct node *n) {
 				fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
 				break;
 			case 2:
-				if(n->left->type==3) {
-					printf("%d\n", array[getloc(n->left)]);
+				if(n->left->type==7) {
+//					printf("%d\n", array[getloc(n->left)]);
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
 					fprintf(fp, "OUT R%d\n", avail_reg);
 				}
@@ -283,16 +284,21 @@ void start(struct node *n) {
 			case 3:	
 				loc = (n->left->character)-97;
 				start(n->right);
-				if(n->right->type==3) {
+				if(n->right->type==7) {
 					array[loc] = array[getloc(n->right)];
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
 					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
 				}
+				else if(n->right->type==6) {
+					array[loc] = n->right->integer;
+					fprintf(fp, "MOV [%d], %d\n", loc, n->right->integer);
+				}				
 				else {
 //					++avail_reg;
 					array[loc] = n->right->integer;
 //					--avail_reg;
 //					fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
+					
 					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
 				}
 				break;

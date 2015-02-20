@@ -45,35 +45,35 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DIGIT = 260,
-    READ = 261,
-    WRITE = 262,
-    ID = 263,
-    IF = 264,
-    THEN = 265,
-    ENDIF = 266,
-    ELSE = 267,
-    WHILE = 268,
-    DO = 269,
-    ENDWHILE = 270,
-    BEGINING = 271,
-    END = 272
+    DIGIT = 258,
+    READ = 259,
+    WRITE = 260,
+    ID = 261,
+    IF = 262,
+    THEN = 263,
+    ENDIF = 264,
+    ELSE = 265,
+    WHILE = 266,
+    DO = 267,
+    ENDWHILE = 268,
+    BEGINING = 269,
+    END = 270
   };
 #endif
 /* Tokens.  */
-#define DIGIT 260
-#define READ 261
-#define WRITE 262
-#define ID 263
-#define IF 264
-#define THEN 265
-#define ENDIF 266
-#define ELSE 267
-#define WHILE 268
-#define DO 269
-#define ENDWHILE 270
-#define BEGINING 271
-#define END 272
+#define DIGIT 258
+#define READ 259
+#define WRITE 260
+#define ID 261
+#define IF 262
+#define THEN 263
+#define ENDIF 264
+#define ELSE 265
+#define WHILE 266
+#define DO 267
+#define ENDWHILE 268
+#define BEGINING 269
+#define END 270
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
