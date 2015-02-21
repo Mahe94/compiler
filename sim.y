@@ -6,15 +6,29 @@
 	
 	struct node {
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
-		char character;
+		char *name;
 		int integer;
 		struct node *right, *middle, *left;
 	};
 	
-	void inorder(struct node *n);
+	
+	struct Gsymbol {
+		char *NAME;
+		int type;
+		int size;
+		int binding;
+		struct Gsymbol *next;
+	}*Symbol=NULL;
+	
 	void start(struct node *n);
 	int getloc(struct node *n);
+	void printSymbol();
+	void Ginstall(char *N, int t, int s);
+	struct Gsymbol *Glookup(char *name);
+//	struct *node nodeCreate(int t, char *n, int i, struct node *r, struct node *m, struct node *l);
 	
+	int currentType;
+	int currentBinding = 0;
 	int array[26];	
 	int loc;
 	int val;
@@ -30,17 +44,40 @@
 }
 
 %right '='
-%left '<' '>'
+%left "==" "!="
+%left '<' "<=" '>' ">="
 %left '+' '-'
 %left '*' '/'
-%token <n> DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE BEGINING END
+%token <n> DECL ENDDECL TYPE DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE BEGINING END 
 
-%type <n> expr Stmt Slist Start
+%type <n> expr Stmt Slist Body Decl_list decl id_list type
 	 
 %% 
 
-Start : BEGINING Slist END		{$$=(struct node*)malloc(sizeof(struct node));
+Prog : Declaration Body ;
+
+Declaration : DECL Decl_list ENDDECL {printSymbol();};
+
+Decl_list : decl Decl_list
+	| decl	
+	;
+	
+decl :	type id_list ';'
+	;
+
+type : TYPE {currentType = $1->type;}
+	;
+	
+id_list: ID ',' id_list		{Ginstall($1->name, currentType, 1);}
+	| ID'['DIGIT']' ',' id_list	{Ginstall($1->name, currentType, $3->integer);}
+	| ID 	{Ginstall($1->name, currentType, 1);}
+	| ID'['DIGIT']'	{Ginstall($1->name, currentType, $3->integer);}	
+	;
+
+Body : BEGINING Slist END		{$$=(struct node*)malloc(sizeof(struct node));
 			$$=$2;
+			printf("Code\n");
+			scanf("%d",&loc);
 			fp = fopen("output", "w+");	
 			fprintf(fp, "START\n");
 			start($$);
@@ -89,53 +126,53 @@ Stmt : ID '=' expr ';'     	{$$=(struct node*)malloc(sizeof(struct node));
 
 expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='+';
+			$$->name[0]='+';
 			$$->right=$3;
 			$$->left=$1;}
     	|expr '-' expr	{$$=(struct node*)malloc(sizeof(struct node));
     			$$->type=0;
-			$$->character='-';
+			$$->name[0]='-';
     			$$->right=$3;
 			$$->left=$1;}
 	|expr '*' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='*';
+			$$->name[0]='*';
 			$$->right=$3;
 			$$->left=$1;}
 	|expr '/' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='/';
+			$$->name[0]='/';
 			$$->right=$3;
 			$$->left=$1;}
 	|expr '<' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='<';
+			$$->name[0]='<';
 			$$->right=$3;
 			$$->left=$1;}	
 	|expr '>' expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='>';
+			$$->name[0]='>';
 			$$->right=$3;
 			$$->left=$1;}
-	|expr '!''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+	|expr "!=" expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='!';
-			$$->right=$4;
+			$$->name[0]='!';
+			$$->right=$3;
 			$$->left=$1;}
-	|expr '=''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+	|expr "==" expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='=';
-			$$->right=$4;
+			$$->name[0]='=';
+			$$->right=$3;
 			$$->left=$1;}
-	|expr '<''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+	|expr "<=" expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='l';
-			$$->right=$4;
+			$$->name[0]='l';
+			$$->right=$3;
 			$$->left=$1;}	  
-	|expr '>''=' expr	{$$=(struct node*)malloc(sizeof(struct node));
+	|expr ">=" expr	{$$=(struct node*)malloc(sizeof(struct node));
 			$$->type=0;
-			$$->character='g';
-			$$->right=$4;
+			$$->name[0]='g';
+			$$->right=$3	;
 			$$->left=$1;}     
 	| '(' expr ')'	{$$=$2;}
 	| DIGIT         {$1->type=6;
@@ -147,6 +184,51 @@ expr:	expr '+' expr	{$$=(struct node*)malloc(sizeof(struct node));
 %%     
 
 #include "lex.yy.c"
+
+void printSymbol() {
+	struct Gsymbol *symbol = Symbol;
+	while(symbol != NULL) {
+		printf("%s %d %d %d", symbol->NAME, symbol->type, symbol->size, symbol->binding);
+		symbol = symbol->next;
+	}
+}
+
+struct Gsymbol *Glookup(char *name) {
+	struct Gsymbol *symbol = Symbol;
+	while(symbol != NULL) {
+		if(strcmp(symbol->NAME,name)==0)
+			return symbol;
+		symbol = symbol->next;
+	}
+	return NULL;
+}
+
+void Ginstall(char *N, int t, int s) {
+	if(Glookup(N)!=NULL) {
+		yyerror(strcat(N ," has been declared earlier"));
+		exit(1);
+	}
+	struct Gsymbol *symbol = Symbol;
+	if(symbol != NULL) {
+		while(symbol->next != NULL)
+			symbol = symbol->next;
+		symbol->next = (struct Gsymbol*)malloc(sizeof(struct Gsymbol));
+		symbol = symbol->next;
+	}
+	else {
+		symbol = (struct Gsymbol*)malloc(sizeof(struct Gsymbol));
+		Symbol = symbol;
+	}
+
+	symbol->NAME = (char*)malloc(sizeof(N));
+	strcpy(symbol->NAME,N);
+	symbol->type = t;
+	symbol->size = s;
+	symbol->binding = currentBinding;
+	symbol->next = NULL;
+
+	currentBinding = currentBinding + s;	
+}
 
 int compute(char c, int a, int b) {
 	switch(c) {
@@ -181,24 +263,8 @@ int leaf(struct node *n) {
 		return 0;
 }
 
-/*
-void inorder(struct node *n) {
-	if(leaf(n)) {
-		printf("%d ", n->integer);
-	}
-	else {
-		printf("( ");
-		inorder(n->left);
-		printf("%c ", n->character);
-		inorder(n->right);
-		printf(") ");
-		n->integer = compute(n->character, n->left->integer, n->right->integer);
-	}
-}
-*/
-
 int getloc(struct node *n) {
-	return (n->character)-97;
+	return (n->name[0])-97;
 }
 
 void start(struct node *n) {
@@ -213,7 +279,7 @@ void start(struct node *n) {
 				if(n->left->type==7 && n->right->type==7) {
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
 					fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, getloc(n->right));
-					n->integer = compute(n->character, array[getloc(n->left)], array[getloc(n->right)]);
+					n->integer = compute(n->name[0], array[getloc(n->left)], array[getloc(n->right)]);
 				}
 				else {
 					if(n->left->type==7) {
@@ -226,7 +292,7 @@ void start(struct node *n) {
 						}
 						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
 //						fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
-						n->integer = compute(n->character, array[getloc(n->left)], n->right->integer);	
+						n->integer = compute(n->name[0], array[getloc(n->left)], n->right->integer);	
 					}
 					else {
 						if(n->right->type==7) {
@@ -239,7 +305,7 @@ void start(struct node *n) {
 							}
 							fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
 //							fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
-							n->integer = compute(n->character, n->left->integer, array[getloc(n->right)]);	
+							n->integer = compute(n->name[0], n->left->integer, array[getloc(n->right)]);	
 						}
 						else {
 							if(n->left->type==6)
@@ -252,7 +318,7 @@ void start(struct node *n) {
 							else 
 								start(n->right);
 							--avail_reg;
-							n->integer = compute(n->character, n->left->integer, n->right->integer);
+							n->integer = compute(n->name[0], n->left->integer, n->right->integer);
 						}
 					}
 				}
@@ -260,7 +326,7 @@ void start(struct node *n) {
 			case 1:
 				loc = getloc(n->left);
 //				scanf("%d", &val);
- 				array[loc] = val;
+// 				array[loc] = val;
 				fprintf(fp, "IN R%d\n", avail_reg);
 				fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
 				break;
@@ -282,7 +348,8 @@ void start(struct node *n) {
 				}
 				break;
 			case 3:	
-				loc = (n->left->character)-97;
+				
+				loc = (n->left->name[0])-97;
 				start(n->right);
 				if(n->right->type==7) {
 					array[loc] = array[getloc(n->right)];

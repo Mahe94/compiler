@@ -1,6 +1,9 @@
 %{ 
 	#include <stdio.h>
-	#include "y.tab.h"	
+	#include <string.h>
+	#include "y.tab.h"
+	
+	int a;	
 %} 
 
 %% 
@@ -8,7 +11,15 @@
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
-		return DIGIT;}	
+		return DIGIT;}
+"enddecl" {	return ENDDECL;}	
+"decl"	{	return DECL;}
+"integer" {	yylval.n = (struct node*)malloc(sizeof(struct node));
+		yylval.n->type = 1;
+		return TYPE;}
+"boolean" {	yylval.n = (struct node*)malloc(sizeof(struct node));
+		yylval.n->type = 0;
+		return TYPE;}
 "begin"	{	return BEGINING;}
 "end"	{	return END;}
 "write"	{	return WRITE;}
@@ -21,7 +32,8 @@
 "do"	{	return DO;}
 "endwhile" {	return ENDWHILE;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
-		yylval.n->character=yytext[0]; 
+		yylval.n->name = (char*)malloc(sizeof(yytext));
+		strcpy(yylval.n->name,yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
 		return ID;}	
@@ -35,6 +47,9 @@
 \(	return *yytext;
 \)	return *yytext;
 ";"	return *yytext;
+","	return *yytext;
+"["	return *yytext;
+"]"	return *yytext;
 [\n\t' ']	{};
 %%
 

@@ -45,46 +45,52 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DIGIT = 258,
-    READ = 259,
-    WRITE = 260,
-    ID = 261,
-    IF = 262,
-    THEN = 263,
-    ENDIF = 264,
-    ELSE = 265,
-    WHILE = 266,
-    DO = 267,
-    ENDWHILE = 268,
-    BEGINING = 269,
-    END = 270
+    DECL = 262,
+    ENDDECL = 263,
+    TYPE = 264,
+    DIGIT = 265,
+    READ = 266,
+    WRITE = 267,
+    ID = 268,
+    IF = 269,
+    THEN = 270,
+    ENDIF = 271,
+    ELSE = 272,
+    WHILE = 273,
+    DO = 274,
+    ENDWHILE = 275,
+    BEGINING = 276,
+    END = 277
   };
 #endif
 /* Tokens.  */
-#define DIGIT 258
-#define READ 259
-#define WRITE 260
-#define ID 261
-#define IF 262
-#define THEN 263
-#define ENDIF 264
-#define ELSE 265
-#define WHILE 266
-#define DO 267
-#define ENDWHILE 268
-#define BEGINING 269
-#define END 270
+#define DECL 262
+#define ENDDECL 263
+#define TYPE 264
+#define DIGIT 265
+#define READ 266
+#define WRITE 267
+#define ID 268
+#define IF 269
+#define THEN 270
+#define ENDIF 271
+#define ELSE 272
+#define WHILE 273
+#define DO 274
+#define ENDWHILE 275
+#define BEGINING 276
+#define END 277
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 28 "sim.y" /* yacc.c:1909  */
+#line 42 "sim.y" /* yacc.c:1909  */
 
 	struct node *n;	
 
-#line 88 "y.tab.h" /* yacc.c:1909  */
+#line 94 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
