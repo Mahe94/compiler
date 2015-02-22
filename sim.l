@@ -8,6 +8,7 @@
 
 %% 
 [0-9]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
+		yylval.n->type = 6;
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
@@ -32,6 +33,7 @@
 "do"	{	return DO;}
 "endwhile" {	return ENDWHILE;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
+		yylval.n->type = 7;
 		yylval.n->name = (char*)malloc(sizeof(yytext));
 		strcpy(yylval.n->name,yytext); 
 		yylval.n->right=NULL;
@@ -46,6 +48,7 @@
 \>	{	return *yytext;}
 \(	return *yytext;
 \)	return *yytext;
+"%"	return *yytext;
 ";"	return *yytext;
 ","	return *yytext;
 "["	return *yytext;
