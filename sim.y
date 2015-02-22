@@ -97,6 +97,8 @@ Stmt : ID '=' expr ';'     	{ $$ = nodeCreate(3, NULL, 0, $1, NULL, $3); }
 				
 	| READ '(' ID ')' ';'
 				{$$ = nodeCreate(1, NULL, 0, $3, NULL, NULL); }
+	| READ '(' ID '[' expr ']' ';'
+				{$$ = nodeCreate(1, NULL, 0, $3, NULL, $5); }
 				
 	| WRITE '(' expr ')' ';'	
 				{ $$ = nodeCreate(2, NULL, 0, $3, NULL, NULL); }
@@ -122,8 +124,9 @@ expr:	expr '+' expr	{ $$ = nodeCreate(0, "+", 0, $1, NULL, $3); }
 	| '(' expr ')'	{ $$ = $2; }
 	| DIGIT         { $$ = $1; } 
 	| ID		{ $$ = $1; }
-	| ID'['DIGIT']' { $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
-	| ID'['ID']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
+//	| ID'['DIGIT']' { $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
+//	| ID'['ID']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
+	| ID'['expr']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
 ; 
 
 %%     
