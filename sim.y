@@ -122,8 +122,8 @@ expr:	expr '+' expr	{ $$ = nodeCreate(0, "+", 0, $1, NULL, $3); }
 	| '(' expr ')'	{ $$ = $2; }
 	| DIGIT         { $$ = $1; } 
 	| ID		{ $$ = $1; }
-	| ID'['DIGIT']' { $$ = $1; }
-	| ID'['ID']'	{ $$ }
+	| ID'['DIGIT']' { $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
+	| ID'['ID']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
 ; 
 
 %%     
