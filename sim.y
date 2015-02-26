@@ -21,7 +21,7 @@
 	}*Symbol=NULL;
 	
 	void start(struct node *n);	//starting of parse tree generation
-	int getloc(struct node *n);	
+	int getloc(char *name);	
 	void printSymbol();		
 	void Ginstall(char *N, int t, int s);	//creating an entry in symbol table
 	struct Gsymbol *Glookup(char *name);	//getting pointing from symbol table
@@ -32,7 +32,7 @@
 	int currentType;	//storing the current datatype while making the symbol table
 	int currentBinding = 0;	//storing the starting available address for binding
 	int array[26];	
-	int loc;
+	int loc, t1, t2;
 	int val;
 	
 	FILE *fp=NULL;	//file pointer for storing the machine code
@@ -94,10 +94,11 @@ Slist : Stmt Slist 	{ $$ = nodeCreate(100, NULL, 0, $1, NULL, $2);
 	;
 
 Stmt : ID '=' expr ';'     	{ $$ = nodeCreate(3, NULL, 0, $1, NULL, $3); } 
+	| ID '[' expr ']' '=' expr ';'	{ $$ = nodeCreate(3, NULL, 0, $1, $3, $6); }
 				
 	| READ '(' ID ')' ';'
 				{$$ = nodeCreate(1, NULL, 0, $3, NULL, NULL); }
-	| READ '(' ID '[' expr ']' ';'
+	| READ '(' ID '[' expr ']' ')' ';'
 				{$$ = nodeCreate(1, NULL, 0, $3, NULL, $5); }
 				
 	| WRITE '(' expr ')' ';'	
@@ -126,7 +127,7 @@ expr:	expr '+' expr	{ $$ = nodeCreate(0, "+", 0, $1, NULL, $3); }
 	| ID		{ $$ = $1; }
 //	| ID'['DIGIT']' { $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
 //	| ID'['ID']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
-	| ID'['expr']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
+	| ID'['expr']'	{ $$ = nodeCreate(8, $1->name, 0, $3, NULL, NULL); }
 ; 
 
 %%     
@@ -192,57 +193,53 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 	return N;
 }
 
-void compute(char *op, int t) {
-	if(t == 1) {
-		if(!strcmp(op, "+")) {
-			fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "-")) {
-			fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+1);	
-			return ;
-		}
-		if(!strcmp(op, "*")) {
-			fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "/")) {
-			fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "%")) {
-			fprintf(fp, "MOV R%d, R%d\n", avail_reg+2, avail_reg);
-			fprintf(fp, "DIV R%d, R%d\n", avail_reg+2, avail_reg+1);
-			fprintf(fp, "MUL R%d, R%d\n", avail_reg+2, avail_reg+1);
-			fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+2);
-			return ;
-		}
+void compute(char *op) {
+	if(!strcmp(op, "+")) {
+		fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
 	}
-	else {
-		if(!strcmp(op, "<")) {
-			fprintf(fp, "LT R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, ">")) {
-			fprintf(fp, "GT R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "!=")) {
-			fprintf(fp, "NE R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "==")) {
-			fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, "<=")) {
-			fprintf(fp, "LE R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
-		if(!strcmp(op, ">=")) {
-			fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
-			return ;
-		}
+	if(!strcmp(op, "-")) {
+		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+1);	
+		return ;
+	}
+	if(!strcmp(op, "*")) {
+		fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, "/")) {
+		fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, "%")) {
+		fprintf(fp, "MOV R%d, R%d\n", avail_reg+2, avail_reg);
+		fprintf(fp, "DIV R%d, R%d\n", avail_reg+2, avail_reg+1);
+		fprintf(fp, "MUL R%d, R%d\n", avail_reg+2, avail_reg+1);
+		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+2);
+		return ;
+	}
+	if(!strcmp(op, "<")) {
+		fprintf(fp, "LT R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, ">")) {
+		fprintf(fp, "GT R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, "!=")) {
+		fprintf(fp, "NE R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, "==")) {
+		fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, "<=")) {
+		fprintf(fp, "LE R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
+	}
+	if(!strcmp(op, ">=")) {
+		fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
+		return ;
 	}
 	char error[100] = "Operands not matching with operator ";
 	strcat(error, op);
@@ -256,8 +253,9 @@ int leaf(struct node *n) {
 		return 0;
 }
 
-int getloc(struct node *n) {
-	return (n->name[0])-97;
+int getloc(char *name) {
+	struct Gsymbol *symbol = Glookup(name);
+	return symbol->binding;
 }
 
 int get_datatype(struct node *n) {
@@ -282,112 +280,163 @@ void start(struct node *n) {
 	int l1, l2;
 	if(!leaf(n)) {
 		switch(n->type) {
-			case 0:	
-//				start(n->left);
-//				start(n->right);
-				if(n->left->type==7 && n->right->type==7) {
-					check_datatypes(get_datatype(n->left), get_datatype(n->right), n->name);
-					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
-					fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, getloc(n->right));
-					compute(n->name, currentType);
-				}
-				else {
-					if(n->left->type==7) {
-						if(n->right->type==6) {
-							fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->right->integer);
-							check_datatypes(get_datatype(n->left), get_datatype(n->right), n->name);
-						}
-						else {
-							++avail_reg;
-							start(n->right);
-							--avail_reg;
-							check_datatypes(get_datatype(n->left), currentType, n->name);
-						}
-						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->left));
-//						fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
-						compute(n->name, currentType);	
-					}
-					else {
-						if(n->right->type==7) {
-							if(n->left->type==6) {
-								fprintf(fp, "MOV R%d, %d\n", avail_reg+1, n->left->integer);
-								check_datatypes(get_datatype(n->left), get_datatype(n->right), n->name);
-							}
-							else {
-								++avail_reg;
-								start(n->left);
-								--avail_reg;
-								check_datatypes(currentType, get_datatype(n->right), n->name);
-							}
-							fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
-//							fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
-							compute(n->name, currentType);	
-						}
-						else {
-							int t1, t2;
-							if(n->left->type==6)
-								fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
-							else
-								start(n->left);
-							++avail_reg;
-							t1 = currentType;
-							if(n->right->type==6) 
-								fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
-							else 
-								start(n->right);
-							--avail_reg;
-							t2 = currentType;
-							check_datatypes(t1, t2	, n->name);
-							compute(n->name, currentType);
-						}
-					}
-				}
-				break;
-			case 1:
-				loc = getloc(n->left);
-//				scanf("%d", &val);
-// 				array[loc] = val;
-				fprintf(fp, "IN R%d\n", avail_reg);
-				fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
-				break;
-			case 2:
-				if(n->left->type==7) {
-//					printf("%d\n", array[getloc(n->left)]);
-					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-					fprintf(fp, "OUT R%d\n", avail_reg);
-				}
-				else { if(n->left->type==6) {
-						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
-						fprintf(fp, "OUT R%d\n", avail_reg);
-					}
-					else {
+			case 0:						//operations
+				switch(n->left->type) {
+					case 0:
 						start(n->left);
-						fprintf(fp, "OUT R%d\n", avail_reg);
-//						printf("%d\n", n->left->integer);
+						break;
+					case 6:
+						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
+						t1 = 1;
+						break;
+					
+					case 7:
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+						t1 = get_datatype(n->left);
+						break;
+					case 8:
+						start(n->left);
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+						t1 = get_datatype(n->left);
+						break;
+					default:
+						yyerror("Type 0 error");				
 					}
+				
+				++avail_reg;
+				switch(n->right->type) {
+					case 0:
+						start(n->right);
+						break;
+					case 6:
+						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
+						t2 = 1;
+						break;
+					
+					case 7:
+						loc = getloc(n->right->name);
+						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+						t2 = get_datatype(n->right);
+						break;
+					case 8:
+						start(n->right);
+						loc = getloc(n->right->name);
+						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+						t2 = get_datatype(n->right);
+						break;
+					default:
+						yyerror("Type 0 error");				
+				}
+				--avail_reg;
+				check_datatypes(t1, t2	, n->name);
+				compute(n->name);
+				break;
+			case 1:					//read
+				loc = getloc(n->left->name);
+				fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, loc);
+				if(n->right != NULL) {
+					avail_reg = avail_reg + 2;
+					switch(n->right->type) {
+						case 0:
+							start(n->right);
+							break;
+						case 6:
+							fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
+							t2 = 1;
+							break;
+					
+						case 7:
+							loc = getloc(n->right->name);
+							fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+							t2 = get_datatype(n->right);
+							break;
+						case 8:
+							start(n->right);
+							loc = getloc(n->right->name);
+							fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+							fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+							fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+							t2 = get_datatype(n->right);
+							break;
+						default:
+							yyerror("Type 0 error");				
+					}
+					avail_reg = avail_reg - 2;
+					fprintf(fp, "ADD R%d, R%d\n", avail_reg+1, avail_reg+2);
+				}
+				fprintf(fp, "IN R%d\n", avail_reg);
+				fprintf(fp, "MOV [R%d], R%d\n", avail_reg+1, avail_reg);
+				break;
+			case 2:						//write
+				
+				switch(n->left->type) {
+					case 0:
+						start(n->left);
+					case 6:
+						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
+						break;
+					
+					case 7:
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+						t1 = get_datatype(n->left);
+						break;
+					case 8:
+						start(n->left);
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+						t1 = get_datatype(n->left);
+						break;
+					default:
+						yyerror("Type 2 error");
 				}
 				break;
-			case 3:	
-				
-				loc = (n->left->name[0])-97;
-				start(n->right);
-				if(n->right->type==7) {
-					array[loc] = array[getloc(n->right)];
-					fprintf(fp, "MOV R%d, [%d]\n", avail_reg, getloc(n->right));
-					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
+			case 3:				//assignment
+				loc = getloc(n->left->name);
+				fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, loc);
+				t1 = get_datatype(n->left);
+				if(n->middle != NULL) {
+					avail_reg = avail_reg + 2;
+					start(n->right);
+					avail_reg = avail_reg - 2;
+					fprintf(fp, "ADD R%d, R%d\n", avail_reg+1, avail_reg+2);
 				}
-				else if(n->right->type==6) {
-					array[loc] = n->right->integer;
-					fprintf(fp, "MOV [%d], %d\n", loc, n->right->integer);
-				}				
-				else {
-//					++avail_reg;
-					array[loc] = n->right->integer;
-//					--avail_reg;
-//					fprintf(fp, "MOV R%d, R%d\n", avail_reg, avail_reg+1);
+				++avail_reg;
+				switch(n->left->type) {
+					case 0:
+						start(n->left);
+						break;
+					case 6:
+						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
+						t1 = 1;
+						break;
 					
-					fprintf(fp, "MOV [%d], R%d\n", loc, avail_reg);
+					case 7:
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+						t1 = get_datatype(n->left);
+						break;
+					case 8:
+						start(n->left);
+						loc = getloc(n->left->name);
+						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+						t1 = get_datatype(n->left);
+						break;
+					default:
+						yyerror("Type 3 error");				
 				}
+				--avail_reg;
+				fprintf(fp, "MOV [R%d], R%d\n", avail_reg, avail_reg+1);
 				break;
 				
 			case 4:
