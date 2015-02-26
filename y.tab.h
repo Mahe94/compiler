@@ -45,41 +45,51 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    DECL = 262,
-    ENDDECL = 263,
-    TYPE = 264,
-    DIGIT = 265,
-    READ = 266,
-    WRITE = 267,
-    ID = 268,
-    IF = 269,
-    THEN = 270,
-    ENDIF = 271,
-    ELSE = 272,
-    WHILE = 273,
-    DO = 274,
-    ENDWHILE = 275,
-    BEGINING = 276,
-    END = 277
+    AND = 258,
+    OR = 259,
+    NOT = 264,
+    DECL = 265,
+    ENDDECL = 266,
+    TYPE = 267,
+    DIGIT = 268,
+    READ = 269,
+    WRITE = 270,
+    ID = 271,
+    IF = 272,
+    THEN = 273,
+    ENDIF = 274,
+    ELSE = 275,
+    WHILE = 276,
+    DO = 277,
+    ENDWHILE = 278,
+    BEGINING = 279,
+    END = 280,
+    TRUE = 281,
+    FALSE = 282
   };
 #endif
 /* Tokens.  */
-#define DECL 262
-#define ENDDECL 263
-#define TYPE 264
-#define DIGIT 265
-#define READ 266
-#define WRITE 267
-#define ID 268
-#define IF 269
-#define THEN 270
-#define ENDIF 271
-#define ELSE 272
-#define WHILE 273
-#define DO 274
-#define ENDWHILE 275
-#define BEGINING 276
-#define END 277
+#define AND 258
+#define OR 259
+#define NOT 264
+#define DECL 265
+#define ENDDECL 266
+#define TYPE 267
+#define DIGIT 268
+#define READ 269
+#define WRITE 270
+#define ID 271
+#define IF 272
+#define THEN 273
+#define ENDIF 274
+#define ELSE 275
+#define WHILE 276
+#define DO 277
+#define ENDWHILE 278
+#define BEGINING 279
+#define END 280
+#define TRUE 281
+#define FALSE 282
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -90,7 +100,7 @@ union YYSTYPE
 
 	struct node *n;	
 
-#line 94 "y.tab.h" /* yacc.c:1909  */
+#line 104 "y.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

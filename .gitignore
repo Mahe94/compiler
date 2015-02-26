@@ -2,5 +2,6 @@
 *~
 *.o
 *.swp
+*.sim
 output
 prog

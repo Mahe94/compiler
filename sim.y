@@ -32,7 +32,7 @@
 	int currentType;	//storing the current datatype while making the symbol table
 	int currentBinding = 0;	//storing the starting available address for binding
 	int array[26];	
-	int loc, t1, t2;
+	int loc, T1, T2;
 	int val;
 	
 	FILE *fp=NULL;	//file pointer for storing the machine code
@@ -46,11 +46,14 @@
 }
 
 %right '='
+%left AND
+%left OR
 %left "==" "!="
 %left '<' "<=" '>' ">="
 %left '+' '-'
 %left '*' '/' '%'
-%token <n> DECL ENDDECL TYPE DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE BEGINING END 
+%right NOT
+%token <n> DECL ENDDECL TYPE DIGIT READ WRITE ID IF THEN ENDIF ELSE WHILE DO ENDWHILE BEGINING END TRUE FALSE NOT OR AND
 
 %type <n> expr Stmt Slist Body Decl_list decl id_list type
 	 
@@ -78,8 +81,6 @@ id_list: ID ',' id_list	{ Ginstall($1->name, currentType, 1);}
 
 Body : BEGINING Slist END	{
 				  $$=$2;
-				  printf("Code\n");
-				  scanf("%d",&loc);
 				  fp = fopen("output", "w+");	
 				  fprintf(fp, "START\n");
 				  start($$);
@@ -122,12 +123,15 @@ expr:	expr '+' expr	{ $$ = nodeCreate(0, "+", 0, $1, NULL, $3); }
 	|expr "==" expr	{ $$ = nodeCreate(0, "==", 0, $1, NULL, $3); }
 	|expr "<=" expr	{ $$ = nodeCreate(0, "<=", 0, $1, NULL, $3); }	  
 	|expr ">=" expr	{ $$ = nodeCreate(0, ">=", 0, $1, NULL, $3); }     
-	| '(' expr ')'	{ $$ = $2; }
-	| DIGIT         { $$ = $1; } 
-	| ID		{ $$ = $1; }
-//	| ID'['DIGIT']' { $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
-//	| ID'['ID']'	{ $$ = nodeCreate(8, $1->name, 0, $2, NULL, NULL); }
-	| ID'['expr']'	{ $$ = nodeCreate(8, $1->name, 0, $3, NULL, NULL); }
+	|'(' expr ')'	{ $$ = $2; }
+	|DIGIT          { $$ = $1; } 
+	|ID		{ $$ = $1; }
+	|expr AND expr{ $$ = nodeCreate(10, "and", 0, $1, NULL, $3); }
+	|expr OR expr { $$ = nodeCreate(10, "or", 0, $1, NULL, $3); }
+	|NOT expr	{ $$ = nodeCreate(10, "not", 0, $2, NULL, NULL); }
+	|ID'['expr']'	{ $$ = nodeCreate(8, $1->name, 0, $3, NULL, NULL); }
+	|TRUE		{ $$ = nodeCreate(9, "true", 1, NULL, NULL, NULL); }
+	|FALSE		{ $$ = nodeCreate(9, "false", 0, NULL, NULL, NULL); }
 ; 
 
 %%     
@@ -193,21 +197,49 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 	return N;
 }
 
+void compute_bool(char *op) {
+	if(!strcmp(op, "and")) {
+		fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
+		return;
+	}
+	if(!strcmp(op, "or")) {
+		fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+		fprintf(fp, "MOV R%d, 1\n", avail_reg+1);
+		fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
+		return;
+	}
+	if(!strcmp(op, "not")) {
+		fprintf(fp, "MOV R%d, 0\n", avail_reg+1);
+		fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
+		fprintf(fp, "JNZ R%d, L%d\n", avail_reg, avail_l);
+		fprintf(fp, "MOV R%d, 0\nL%d:\n", avail_reg, avail_l);
+		++avail_l;
+		currentType = 0;
+		return;
+	}
+}
+
 void compute(char *op) {
 	if(!strcmp(op, "+")) {
 		fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "-")) {
 		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+1);	
+		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "*")) {
 		fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "/")) {
 		fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "%")) {
@@ -215,30 +247,37 @@ void compute(char *op) {
 		fprintf(fp, "DIV R%d, R%d\n", avail_reg+2, avail_reg+1);
 		fprintf(fp, "MUL R%d, R%d\n", avail_reg+2, avail_reg+1);
 		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+2);
+		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "<")) {
 		fprintf(fp, "LT R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, ">")) {
 		fprintf(fp, "GT R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "!=")) {
 		fprintf(fp, "NE R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "==")) {
 		fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "<=")) {
 		fprintf(fp, "LE R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, ">=")) {
 		fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
+		currentType = 0;
 		return ;
 	}
 	char error[100] = "Operands not matching with operator ";
@@ -274,6 +313,46 @@ void check_datatypes(int t1, int t2, char *op) {
 	currentType = t1;
 }
 
+int variable(struct node *n) {
+	int t;
+	switch(n->type) {
+		case 0:
+			start(n);
+			t = currentType;
+			break;
+		case 6:
+			fprintf(fp, "MOV R%d, %d\n", avail_reg, n->integer);
+			t = 1;
+			break;
+	
+		case 7:
+			loc = getloc(n->name);
+			fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
+			t = get_datatype(n);
+			break;
+		case 8:
+			t = variable(n->left);
+			check_datatypes(t, 1, "");
+			loc = getloc(n->name);
+			fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
+			fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
+			fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
+			t = get_datatype(n);
+			break;
+		case 10:
+			start(n);
+			t = currentType;
+			break;
+		case 9:
+			fprintf(fp, "MOV R%d, %d\n", avail_reg,	 n->integer);
+			t = 0;
+			break;
+		default:
+			yyerror("Type 0 error");				
+	}
+	return t;			
+}
+
 void start(struct node *n) {
 //	printf("STARTED\n");
 //	scanf("%d", avail_reg);
@@ -281,92 +360,20 @@ void start(struct node *n) {
 	if(!leaf(n)) {
 		switch(n->type) {
 			case 0:						//operations
-				switch(n->left->type) {
-					case 0:
-						start(n->left);
-						break;
-					case 6:
-						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
-						t1 = 1;
-						break;
-					
-					case 7:
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-						t1 = get_datatype(n->left);
-						break;
-					case 8:
-						start(n->left);
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
-						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-						t1 = get_datatype(n->left);
-						break;
-					default:
-						yyerror("Type 0 error");				
-					}
-				
+				T1 = variable(n->left);
+				check_datatypes(T1, 1 , n->name);
 				++avail_reg;
-				switch(n->right->type) {
-					case 0:
-						start(n->right);
-						break;
-					case 6:
-						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
-						t2 = 1;
-						break;
-					
-					case 7:
-						loc = getloc(n->right->name);
-						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-						t2 = get_datatype(n->right);
-						break;
-					case 8:
-						start(n->right);
-						loc = getloc(n->right->name);
-						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
-						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-						t2 = get_datatype(n->right);
-						break;
-					default:
-						yyerror("Type 0 error");				
-				}
+				T1 = variable(n->right);
 				--avail_reg;
-				check_datatypes(t1, t2	, n->name);
+				check_datatypes(T1, 1 , n->name);
 				compute(n->name);
 				break;
 			case 1:					//read
 				loc = getloc(n->left->name);
-				fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, loc);
+				fprintf(fp, "MOV R%d, %d\n", avail_reg + 1, loc);
 				if(n->right != NULL) {
 					avail_reg = avail_reg + 2;
-					switch(n->right->type) {
-						case 0:
-							start(n->right);
-							break;
-						case 6:
-							fprintf(fp, "MOV R%d, %d\n", avail_reg, n->right->integer);
-							t2 = 1;
-							break;
-					
-						case 7:
-							loc = getloc(n->right->name);
-							fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-							t2 = get_datatype(n->right);
-							break;
-						case 8:
-							start(n->right);
-							loc = getloc(n->right->name);
-							fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
-							fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-							fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-							t2 = get_datatype(n->right);
-							break;
-						default:
-							yyerror("Type 0 error");				
-					}
+					variable(n->right);
 					avail_reg = avail_reg - 2;
 					fprintf(fp, "ADD R%d, R%d\n", avail_reg+1, avail_reg+2);
 				}
@@ -374,102 +381,59 @@ void start(struct node *n) {
 				fprintf(fp, "MOV [R%d], R%d\n", avail_reg+1, avail_reg);
 				break;
 			case 2:						//write
-				
-				switch(n->left->type) {
-					case 0:
-						start(n->left);
-					case 6:
-						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
-						break;
-					
-					case 7:
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-						t1 = get_datatype(n->left);
-						break;
-					case 8:
-						start(n->left);
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
-						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-						t1 = get_datatype(n->left);
-						break;
-					default:
-						yyerror("Type 2 error");
-				}
+				variable(n->left);
+				fprintf(fp, "OUT R%d\n", avail_reg);
 				break;
 			case 3:				//assignment
 				loc = getloc(n->left->name);
-				fprintf(fp, "MOV R%d, [%d]\n", avail_reg+1, loc);
-				t1 = get_datatype(n->left);
+				fprintf(fp, "MOV R%d, %d\n", avail_reg, loc);
 				if(n->middle != NULL) {
-					avail_reg = avail_reg + 2;
-					start(n->right);
-					avail_reg = avail_reg - 2;
-					fprintf(fp, "ADD R%d, R%d\n", avail_reg+1, avail_reg+2);
+					++avail_reg;
+					T1 = variable(n->middle);
+					--avail_reg;
+					check_datatypes(T1, 1, "");
+					fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
 				}
+				T1 = get_datatype(n->left);
 				++avail_reg;
-				switch(n->left->type) {
-					case 0:
-						start(n->left);
-						break;
-					case 6:
-						fprintf(fp, "MOV R%d, %d\n", avail_reg, n->left->integer);
-						t1 = 1;
-						break;
-					
-					case 7:
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-						t1 = get_datatype(n->left);
-						break;
-					case 8:
-						start(n->left);
-						loc = getloc(n->left->name);
-						fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
-						fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-						fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-						t1 = get_datatype(n->left);
-						break;
-					default:
-						yyerror("Type 3 error");				
-				}
+				T2 = variable(n->right);
 				--avail_reg;
 				fprintf(fp, "MOV [R%d], R%d\n", avail_reg, avail_reg+1);
 				break;
 				
-			case 4:
+			case 4:				//if
 				l1=avail_l, l2=avail_l+1;
 				avail_l+=2;
-				start(n->left);
+				T1=variable(n->left);
+				check_datatypes(T1, 0, "");
 				fprintf(fp, "JZ R%d, L%d\n", avail_reg, l1);
 				start(n->middle);
 				fprintf(fp, "JMP L%d\nL%d:\n", l2, l1);
-				start(n->right);
+				if(n->right != NULL)
+					start(n->right);
 				fprintf(fp, "L%d:\n", l2);
-				
-//				if(n->left->integer == 1) 
-//					start(n->middle);	
-//				
-//				else	
-//					start(n->right);
-//				
 				break;
 			
-			case 5:
+			case 5:				//while
 				l1=avail_l, l2=avail_l+1;
 				avail_l+=2;
 				fprintf(fp, "L%d:\n", l1);
 				start(n->left);
 				fprintf(fp, "JZ R%d, L%d\n", avail_reg, l2);
 				start(n->right);
-//				if(n->left->integer == 1) {
-//					start(n->right);
-//					start(n);
-//				}
 				fprintf(fp, "JMP L%d\nL%d:\n", l1, l2);
 				break;
+				
+			case 10:			//boolean 
+				T1 = variable(n->left);
+				check_datatypes(T1, 0, "");
+				if(n->right != NULL) {
+					T2 = variable(n->right);
+					check_datatypes(T2, 0, "");
+				}
+				compute_bool(n->name);
+				break;
+				
 			case 100:
 				start(n->left);
 				if(n->right!=NULL)
