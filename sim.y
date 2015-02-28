@@ -8,6 +8,7 @@
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
 		char *name;
 		int integer;
+		int datatype;
 		struct node *right, *middle, *left;
 	};
 	

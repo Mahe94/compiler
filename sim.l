@@ -12,6 +12,7 @@
 		yylval.n->integer=atoi(yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
+		yylval.n->datatype=1;
 		return DIGIT;}
 "enddecl" {	return ENDDECL;}	
 "decl"	{	return DECL;}
@@ -39,6 +40,7 @@
 		strcpy(yylval.n->name,yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
+		yylval.n->datatype=0;
 		return TRUE;}
 "FALSE"	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->type = 9;
@@ -47,10 +49,14 @@
 		strcpy(yylval.n->name,yytext); 
 		yylval.n->right=NULL;
 		yylval.n->left=NULL;
+		yylval.n->datatype=0;
 		return FALSE;}
-"AND"	{	return AND;}
-"OR"	{	return OR;}
-"NOT"	{	return NOT;}
+"AND"	{	yylval.n->datatype=0;
+		return AND;}
+"OR"	{	yylval.n->datatype=0;
+		return OR;}
+"NOT"	{	yylval.n->datatype=0;
+		return NOT;}
 [a-z]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->type = 7;
 		yylval.n->name = (char*)malloc(sizeof(yytext));
