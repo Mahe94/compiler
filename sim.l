@@ -6,6 +6,8 @@
 	int a;	
 %} 
 
+%option yylineno
+
 %% 
 [0-9]+	{	yylval.n = (struct node*)malloc(sizeof(struct node));
 		yylval.n->type = 6;

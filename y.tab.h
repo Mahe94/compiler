@@ -96,7 +96,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 44 "sim.y" /* yacc.c:1909  */
+#line 45 "sim.y" /* yacc.c:1909  */
 
 	struct node *n;	
 

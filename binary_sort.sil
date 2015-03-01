@@ -1,0 +1,32 @@
+decl
+integer a[5], i, j, temp;
+boolean e;
+enddecl
+begin
+read(a[0]);
+read(a[1]);
+read(a[2]);
+read(a[3]);
+read(a[4]);
+
+i=4;
+while(i>=0) do
+	j=0;
+	while(j<i) do
+		if(a[j]>a[j+1]) then
+			temp = a[j];
+			a[j] = a[j+1];
+			a[j+1] = temp;
+		else
+		endif
+		j = j + 1;
+	endwhile
+	i = i - 1;
+endwhile
+ 
+i=0;
+while(i<5) do
+	write(a[i]);
+	i=i+1;
+endwhile
+end

@@ -73,6 +73,7 @@
 		int type;	// 0 means operator, 1 means read, 2 means write, 3 means ID
 		char *name;
 		int integer;
+		int datatype;
 		struct node *right, *middle, *left;
 	};
 	
@@ -105,7 +106,7 @@
 	int avail_reg=0, avail_l=0;	//for storing the current available register and jump symbol
 	
 
-#line 109 "y.tab.c" /* yacc.c:339  */
+#line 110 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -191,11 +192,11 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 44 "sim.y" /* yacc.c:355  */
+#line 45 "sim.y" /* yacc.c:355  */
 
 	struct node *n;	
 
-#line 199 "y.tab.c" /* yacc.c:355  */
+#line 200 "y.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -210,7 +211,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 214 "y.tab.c" /* yacc.c:358  */
+#line 215 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -510,11 +511,11 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    64,    66,    67,    70,    73,    76,    77,
-      78,    79,    82,    92,    94,    97,    98,   100,   102,   105,
-     108,   111,   115,   116,   117,   118,   119,   120,   121,   122,
-     123,   124,   125,   126,   127,   128,   129,   130,   131,   132,
-     133,   134
+       0,    64,    64,    66,    68,    69,    72,    75,    78,    79,
+      80,    81,    84,    94,    96,    99,   100,   102,   104,   107,
+     110,   113,   117,   118,   119,   120,   121,   122,   123,   124,
+     125,   126,   127,   128,   131,   132,   137,   138,   139,   140,
+     147,   148
 };
 #endif
 
@@ -1383,43 +1384,43 @@ yyreduce:
   switch (yyn)
     {
         case 3:
-#line 64 "sim.y" /* yacc.c:1646  */
-    {printSymbol();}
-#line 1389 "y.tab.c" /* yacc.c:1646  */
+#line 66 "sim.y" /* yacc.c:1646  */
+    {}
+#line 1390 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 73 "sim.y" /* yacc.c:1646  */
+#line 75 "sim.y" /* yacc.c:1646  */
     {currentType = (yyvsp[0].n)->type;}
-#line 1395 "y.tab.c" /* yacc.c:1646  */
+#line 1396 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 76 "sim.y" /* yacc.c:1646  */
+#line 78 "sim.y" /* yacc.c:1646  */
     { Ginstall((yyvsp[-2].n)->name, currentType, 1);}
-#line 1401 "y.tab.c" /* yacc.c:1646  */
+#line 1402 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 77 "sim.y" /* yacc.c:1646  */
+#line 79 "sim.y" /* yacc.c:1646  */
     { Ginstall((yyvsp[-5].n)->name, currentType, (yyvsp[-3].n)->integer); }
-#line 1407 "y.tab.c" /* yacc.c:1646  */
+#line 1408 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 78 "sim.y" /* yacc.c:1646  */
+#line 80 "sim.y" /* yacc.c:1646  */
     { Ginstall((yyvsp[0].n)->name, currentType, 1); }
-#line 1413 "y.tab.c" /* yacc.c:1646  */
+#line 1414 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 79 "sim.y" /* yacc.c:1646  */
+#line 81 "sim.y" /* yacc.c:1646  */
     { Ginstall((yyvsp[-3].n)->name, currentType, (yyvsp[-1].n)->integer); }
-#line 1419 "y.tab.c" /* yacc.c:1646  */
+#line 1420 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 82 "sim.y" /* yacc.c:1646  */
+#line 84 "sim.y" /* yacc.c:1646  */
     {
 				  (yyval.n)=(yyvsp[-1].n);
 				  fp = fopen("output", "w+");	
@@ -1428,186 +1429,198 @@ yyreduce:
 				  fprintf(fp, "HALT");
 				  fclose(fp);
 				  return 0; }
-#line 1432 "y.tab.c" /* yacc.c:1646  */
+#line 1433 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 92 "sim.y" /* yacc.c:1646  */
+#line 94 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(100, NULL, 0, (yyvsp[-1].n), NULL, (yyvsp[0].n));
 			}
-#line 1439 "y.tab.c" /* yacc.c:1646  */
+#line 1440 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 94 "sim.y" /* yacc.c:1646  */
+#line 96 "sim.y" /* yacc.c:1646  */
     {(yyval.n)=NULL;}
-#line 1445 "y.tab.c" /* yacc.c:1646  */
+#line 1446 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 97 "sim.y" /* yacc.c:1646  */
+#line 99 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(3, NULL, 0, (yyvsp[-3].n), NULL, (yyvsp[-1].n)); }
-#line 1451 "y.tab.c" /* yacc.c:1646  */
+#line 1452 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 98 "sim.y" /* yacc.c:1646  */
+#line 100 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(3, NULL, 0, (yyvsp[-6].n), (yyvsp[-4].n), (yyvsp[-1].n)); }
-#line 1457 "y.tab.c" /* yacc.c:1646  */
+#line 1458 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 101 "sim.y" /* yacc.c:1646  */
+#line 103 "sim.y" /* yacc.c:1646  */
     {(yyval.n) = nodeCreate(1, NULL, 0, (yyvsp[-2].n), NULL, NULL); }
-#line 1463 "y.tab.c" /* yacc.c:1646  */
+#line 1464 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 103 "sim.y" /* yacc.c:1646  */
+#line 105 "sim.y" /* yacc.c:1646  */
     {(yyval.n) = nodeCreate(1, NULL, 0, (yyvsp[-5].n), NULL, (yyvsp[-3].n)); }
-#line 1469 "y.tab.c" /* yacc.c:1646  */
+#line 1470 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 106 "sim.y" /* yacc.c:1646  */
+#line 108 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(2, NULL, 0, (yyvsp[-2].n), NULL, NULL); }
-#line 1475 "y.tab.c" /* yacc.c:1646  */
+#line 1476 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 109 "sim.y" /* yacc.c:1646  */
+#line 111 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(4, NULL, 0, (yyvsp[-6].n), (yyvsp[-3].n), (yyvsp[-1].n)); }
-#line 1481 "y.tab.c" /* yacc.c:1646  */
+#line 1482 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 112 "sim.y" /* yacc.c:1646  */
+#line 114 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(5, NULL, 0, (yyvsp[-4].n), NULL, (yyvsp[-1].n)); }
-#line 1487 "y.tab.c" /* yacc.c:1646  */
+#line 1488 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 115 "sim.y" /* yacc.c:1646  */
+#line 117 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "+", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1493 "y.tab.c" /* yacc.c:1646  */
+#line 1494 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 116 "sim.y" /* yacc.c:1646  */
+#line 118 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "-", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1499 "y.tab.c" /* yacc.c:1646  */
+#line 1500 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 117 "sim.y" /* yacc.c:1646  */
+#line 119 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "*", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1505 "y.tab.c" /* yacc.c:1646  */
+#line 1506 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 118 "sim.y" /* yacc.c:1646  */
+#line 120 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "/", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1511 "y.tab.c" /* yacc.c:1646  */
+#line 1512 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 119 "sim.y" /* yacc.c:1646  */
+#line 121 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "%", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1517 "y.tab.c" /* yacc.c:1646  */
+#line 1518 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 120 "sim.y" /* yacc.c:1646  */
+#line 122 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "<", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1523 "y.tab.c" /* yacc.c:1646  */
+#line 1524 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 121 "sim.y" /* yacc.c:1646  */
+#line 123 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, ">", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1529 "y.tab.c" /* yacc.c:1646  */
+#line 1530 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 122 "sim.y" /* yacc.c:1646  */
+#line 124 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "!=", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1535 "y.tab.c" /* yacc.c:1646  */
+#line 1536 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 123 "sim.y" /* yacc.c:1646  */
+#line 125 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "==", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1541 "y.tab.c" /* yacc.c:1646  */
+#line 1542 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 124 "sim.y" /* yacc.c:1646  */
+#line 126 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, "<=", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1547 "y.tab.c" /* yacc.c:1646  */
+#line 1548 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 125 "sim.y" /* yacc.c:1646  */
+#line 127 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(0, ">=", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1553 "y.tab.c" /* yacc.c:1646  */
+#line 1554 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 126 "sim.y" /* yacc.c:1646  */
-    { (yyval.n) = (yyvsp[-1].n); }
-#line 1559 "y.tab.c" /* yacc.c:1646  */
+#line 128 "sim.y" /* yacc.c:1646  */
+    { (yyval.n) = (yyvsp[-1].n); 
+			  (yyval.n)->datatype = (yyvsp[-1].n)->datatype;
+			}
+#line 1562 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 127 "sim.y" /* yacc.c:1646  */
+#line 131 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = (yyvsp[0].n); }
-#line 1565 "y.tab.c" /* yacc.c:1646  */
+#line 1568 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 128 "sim.y" /* yacc.c:1646  */
-    { (yyval.n) = (yyvsp[0].n); }
-#line 1571 "y.tab.c" /* yacc.c:1646  */
+#line 132 "sim.y" /* yacc.c:1646  */
+    { if(Glookup((yyvsp[0].n)->name)==NULL) 
+			  	yyerror(strcat((yyvsp[0].n)->name, " has not being declared"));
+			  (yyval.n) = (yyvsp[0].n); 
+			  (yyval.n)->datatype = get_datatype((yyval.n));
+			}
+#line 1578 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 129 "sim.y" /* yacc.c:1646  */
+#line 137 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(10, "and", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1577 "y.tab.c" /* yacc.c:1646  */
+#line 1584 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 130 "sim.y" /* yacc.c:1646  */
+#line 138 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(10, "or", 0, (yyvsp[-2].n), NULL, (yyvsp[0].n)); }
-#line 1583 "y.tab.c" /* yacc.c:1646  */
+#line 1590 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 131 "sim.y" /* yacc.c:1646  */
+#line 139 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = nodeCreate(10, "not", 0, (yyvsp[0].n), NULL, NULL); }
-#line 1589 "y.tab.c" /* yacc.c:1646  */
+#line 1596 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 132 "sim.y" /* yacc.c:1646  */
-    { (yyval.n) = nodeCreate(8, (yyvsp[-3].n)->name, 0, (yyvsp[-1].n), NULL, NULL); }
-#line 1595 "y.tab.c" /* yacc.c:1646  */
+#line 140 "sim.y" /* yacc.c:1646  */
+    { if(Glookup((yyvsp[-3].n)->name)==NULL) 
+			  	yyerror(strcat((yyvsp[-3].n)->name, " has not being declared"));
+			  if((yyvsp[-1].n)->datatype == 0) 
+				yyerror("Expecting integer value for array index");
+			  (yyval.n) = nodeCreate(8, (yyvsp[-3].n)->name, 0, (yyvsp[-1].n), NULL, NULL); 
+			  (yyval.n)->datatype = get_datatype((yyval.n));
+			}
+#line 1608 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 133 "sim.y" /* yacc.c:1646  */
-    { (yyval.n) = nodeCreate(9, "true", 1, NULL, NULL, NULL); }
-#line 1601 "y.tab.c" /* yacc.c:1646  */
+#line 147 "sim.y" /* yacc.c:1646  */
+    { (yyval.n) = (yyvsp[0].n);}
+#line 1614 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 134 "sim.y" /* yacc.c:1646  */
-    { (yyval.n) = nodeCreate(9, "false", 0, NULL, NULL, NULL); }
-#line 1607 "y.tab.c" /* yacc.c:1646  */
+#line 148 "sim.y" /* yacc.c:1646  */
+    { (yyval.n) = (yyvsp[0].n);}
+#line 1620 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1611 "y.tab.c" /* yacc.c:1646  */
+#line 1624 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1835,7 +1848,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 137 "sim.y" /* yacc.c:1906  */
+#line 151 "sim.y" /* yacc.c:1906  */
      
 
 #include "lex.yy.c"
@@ -1859,10 +1872,8 @@ struct Gsymbol *Glookup(char *name) {
 }
 
 void Ginstall(char *N, int t, int s) {
-	if(Glookup(N)!=NULL) {
+	if(Glookup(N)!=NULL) 
 		yyerror(strcat(N ," has been declared earlier"));
-		exit(1);
-	}
 	struct Gsymbol *symbol = Symbol;
 	if(symbol != NULL) {
 		while(symbol->next != NULL)
@@ -1888,9 +1899,41 @@ void Ginstall(char *N, int t, int s) {
 struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, struct node *r) {
 	struct node *N = (struct node*)malloc(sizeof(struct node));
 	N->type = t;
+	char error[100] = "Conflicting operands for operator ";
+	int err = 0;
 	if(n!=NULL) {
 		N->name = (char *)malloc(sizeof(n));
 		strcpy(N->name, n);
+		if(t != 7 && t != 9) {
+			if(!strcmp(n, "+") || !strcmp(n, "-") || !strcmp(n, "*") || !strcmp(n, "/") || !strcmp(n, "%")) {
+				if(l->datatype != 1 || r->datatype != 1) 
+					err = 1;
+				else
+					N->datatype = 1;
+			}
+			else if (!strcmp(n, "<") || !strcmp(n, ">") || !strcmp(n, "<=") || !strcmp(n, ">=") || !strcmp(n, "!=") || !strcmp(n, "==")) {
+				if(l->datatype != 1 || r->datatype != 1) 
+					err = 1;
+				else
+					N->datatype = 0;
+			}
+			if(!strcmp(n, "and") || !strcmp(n, "or")) {
+				if(l->datatype != 0 || r->datatype != 0) 
+					err = 1;
+				else
+					N->datatype = 0;
+			}
+			if(!strcmp(n, "not")) { 
+				if(l->datatype != 0) 
+					err = 1;
+				else
+					N->datatype = 0;	
+			}
+		}
+	}
+	if(err) {
+		strcat(error, n);
+		yyerror(error);
 	}
 	N->integer  = i;
 	N->right = r;
@@ -1902,14 +1945,14 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 void compute_bool(char *op) {
 	if(!strcmp(op, "and")) {
 		fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return;
 	}
 	if(!strcmp(op, "or")) {
 		fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
 		fprintf(fp, "MOV R%d, 1\n", avail_reg+1);
 		fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return;
 	}
 	if(!strcmp(op, "not")) {
@@ -1918,7 +1961,7 @@ void compute_bool(char *op) {
 		fprintf(fp, "JNZ R%d, L%d\n", avail_reg, avail_l);
 		fprintf(fp, "MOV R%d, 0\nL%d:\n", avail_reg, avail_l);
 		++avail_l;
-		currentType = 0;
+//		currentType = 0;
 		return;
 	}
 }
@@ -1926,22 +1969,22 @@ void compute_bool(char *op) {
 void compute(char *op) {
 	if(!strcmp(op, "+")) {
 		fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 1;
+//		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "-")) {
 		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+1);	
-		currentType = 1;
+//		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "*")) {
 		fprintf(fp, "MUL R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 1;
+//		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "/")) {
 		fprintf(fp, "DIV R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 1;
+//		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "%")) {
@@ -1949,42 +1992,42 @@ void compute(char *op) {
 		fprintf(fp, "DIV R%d, R%d\n", avail_reg+2, avail_reg+1);
 		fprintf(fp, "MUL R%d, R%d\n", avail_reg+2, avail_reg+1);
 		fprintf(fp, "SUB R%d, R%d\n", avail_reg, avail_reg+2);
-		currentType = 1;
+//		currentType = 1;
 		return ;
 	}
 	if(!strcmp(op, "<")) {
 		fprintf(fp, "LT R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, ">")) {
 		fprintf(fp, "GT R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "!=")) {
 		fprintf(fp, "NE R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "==")) {
 		fprintf(fp, "EQ R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, "<=")) {
 		fprintf(fp, "LE R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
 	if(!strcmp(op, ">=")) {
 		fprintf(fp, "GE R%d, R%d\n", avail_reg, avail_reg+1);
-		currentType = 0;
+//		currentType = 0;
 		return ;
 	}
-	char error[100] = "Operands not matching with operator ";
+/**	char error[100] = "Operands not matching with operator ";
 	strcat(error, op);
-	yyerror(error);
+	yyerror(error);		**/
 }
 
 int leaf(struct node *n) {
@@ -2005,6 +2048,7 @@ int get_datatype(struct node *n) {
 	return s->type;
 }
 
+/**
 void check_datatypes(int t1, int t2, char *op) {
 	if(t1 != t2) {
 		char error[100] = "Conflicting operands for operator ";
@@ -2014,40 +2058,41 @@ void check_datatypes(int t1, int t2, char *op) {
 	}
 	currentType = t1;
 }
+**/
 
 int variable(struct node *n) {
-	int t;
+	int t = 0;
 	switch(n->type) {
 		case 0:
 			start(n);
-			t = currentType;
+//			t = currentType;
 			break;
 		case 6:
 			fprintf(fp, "MOV R%d, %d\n", avail_reg, n->integer);
-			t = 1;
+//			t = 1;
 			break;
 	
 		case 7:
 			loc = getloc(n->name);
 			fprintf(fp, "MOV R%d, [%d]\n", avail_reg, loc);
-			t = get_datatype(n);
+//			t = get_datatype(n);
 			break;
 		case 8:
 			t = variable(n->left);
-			check_datatypes(t, 1, "");
+//			check_datatypes(t, 1, "");
 			loc = getloc(n->name);
 			fprintf(fp, "MOV R%d, %d\n", avail_reg+1, loc);
 			fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
 			fprintf(fp, "MOV R%d, [R%d]\n", avail_reg, avail_reg);
-			t = get_datatype(n);
+//			t = get_datatype(n);
 			break;
 		case 10:
 			start(n);
-			t = currentType;
+//			t = currentType;
 			break;
 		case 9:
 			fprintf(fp, "MOV R%d, %d\n", avail_reg,	 n->integer);
-			t = 0;
+//			t = 0;
 			break;
 		default:
 			yyerror("Type 0 error");				
@@ -2063,11 +2108,11 @@ void start(struct node *n) {
 		switch(n->type) {
 			case 0:						//operations
 				T1 = variable(n->left);
-				check_datatypes(T1, 1 , n->name);
+//				check_datatypes(T1, 1 , n->name);
 				++avail_reg;
 				T1 = variable(n->right);
 				--avail_reg;
-				check_datatypes(T1, 1 , n->name);
+//				check_datatypes(T1, 1 , n->name);
 				compute(n->name);
 				break;
 			case 1:					//read
@@ -2093,7 +2138,7 @@ void start(struct node *n) {
 					++avail_reg;
 					T1 = variable(n->middle);
 					--avail_reg;
-					check_datatypes(T1, 1, "");
+//					check_datatypes(T1, 1, "");
 					fprintf(fp, "ADD R%d, R%d\n", avail_reg, avail_reg+1);
 				}
 				T1 = get_datatype(n->left);
@@ -2107,7 +2152,7 @@ void start(struct node *n) {
 				l1=avail_l, l2=avail_l+1;
 				avail_l+=2;
 				T1=variable(n->left);
-				check_datatypes(T1, 0, "");
+//				check_datatypes(T1, 0, "");
 				fprintf(fp, "JZ R%d, L%d\n", avail_reg, l1);
 				start(n->middle);
 				fprintf(fp, "JMP L%d\nL%d:\n", l2, l1);
@@ -2128,10 +2173,10 @@ void start(struct node *n) {
 				
 			case 10:			//boolean 
 				T1 = variable(n->left);
-				check_datatypes(T1, 0, "");
+//				check_datatypes(T1, 0, "");
 				if(n->right != NULL) {
 					T2 = variable(n->right);
-					check_datatypes(T2, 0, "");
+//					check_datatypes(T2, 0, "");
 				}
 				compute_bool(n->name);
 				break;
@@ -2150,7 +2195,9 @@ void start(struct node *n) {
 
 yyerror(const char *str)
 {
-        fprintf(stderr,"error: %s\n",str);
+	extern int yylineno;
+        fprintf(stderr,"error in line %d: %s\n", yylineno, str);
+        exit(1);
 }
  
 int yywrap()
