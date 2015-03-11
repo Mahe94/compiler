@@ -102,7 +102,7 @@ Stmt : ID '=' expr ';'     	{ $$ = nodeCreate(3, NULL, 0, $1, NULL, $3); }
 	| READ '(' ID ')' ';'
 				{$$ = nodeCreate(1, NULL, 0, $3, NULL, NULL); }
 	| READ '(' ID '[' expr ']' ')' ';'
-				{$$ = nodeCreate(1, NULL, 0, $3, NULL, $5); }
+				{ $$ = nodeCreate(1, NULL, 0, $3, NULL, $5); }
 				
 	| WRITE '(' expr ')' ';'	
 				{ $$ = nodeCreate(2, NULL, 0, $3, NULL, NULL); }
@@ -137,10 +137,7 @@ expr:	expr '+' expr	{ $$ = nodeCreate(0, "+", 0, $1, NULL, $3); }
 	|expr AND expr{ $$ = nodeCreate(10, "and", 0, $1, NULL, $3); }
 	|expr OR expr { $$ = nodeCreate(10, "or", 0, $1, NULL, $3); }
 	|NOT expr	{ $$ = nodeCreate(10, "not", 0, $2, NULL, NULL); }
-	|ID'['expr']'	{ if(Glookup($1->name)==NULL) 
-			  	yyerror(strcat($1->name, " has not being declared"));
-			  if($3->datatype == 0) 
-				yyerror("Expecting integer value for array index");
+	|ID'['expr']'	{ 
 			  $$ = nodeCreate(8, $1->name, 0, $3, NULL, NULL); 
 			  $$->datatype = get_datatype($$);
 			}
@@ -198,12 +195,13 @@ void Ginstall(char *N, int t, int s) {
 struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, struct node *r) {
 	struct node *N = (struct node*)malloc(sizeof(struct node));
 	N->type = t;
-	char error[100] = "Conflicting operands for operator ";
+	char error[100];
 	int err = 0;
 	if(n!=NULL) {
 		N->name = (char *)malloc(sizeof(n));
 		strcpy(N->name, n);
 		if(t != 7 && t != 9) {
+			strcpy(error, "Conflicting operands for operator ");
 			if(!strcmp(n, "+") || !strcmp(n, "-") || !strcmp(n, "*") || !strcmp(n, "/") || !strcmp(n, "%")) {
 				if(l->datatype != 1 || r->datatype != 1) 
 					err = 1;
@@ -228,6 +226,17 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 				else
 					N->datatype = 0;	
 			}
+		}
+		if(t == 8) {
+			if(Glookup(n)==NULL) 
+			  	yyerror(strcat($1->name, " has not being declared"));
+			 if(l->datatype == 0) 
+				yyerror("Expecting integer value for array index");
+		}
+	}
+	else {
+		if(t == 3) {
+				
 		}
 	}
 	if(err) {
