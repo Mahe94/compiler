@@ -229,20 +229,38 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 		}
 		if(t == 8) {
 			if(Glookup(n)==NULL) 
-			  	yyerror(strcat($1->name, " has not being declared"));
+			  	yyerror(strcat(n, " has not being declared"));
 			 if(l->datatype == 0) 
 				yyerror("Expecting integer value for array index");
 		}
-	}
-	else {
-		if(t == 3) {
-				
+		if(err) {
+			strcat(error, n);
+			yyerror(error);
 		}
 	}
-	if(err) {
-		strcat(error, n);
-		yyerror(error);
+	else if(t == 3) {
+		if(Glookup(l->name) == NULL)
+			yyerror(strcat(m->name, " has not being declared"));
+		if(m != NULL && m->datatype == 0)
+			yyerror("Expecting integer value for array index");
+		if(l->datatype != r->datatype)
+			yyerror("Datatype mismatch");	 
 	}
+	else if(t ==1) {
+		if(Glookup(l->name) == NULL)
+			yyerror(strcat(l->name, " has not being declared"));
+		if(l->datatype == 0)
+			yyerror("Cannot read a boolean dataype");
+		if(r != NULL && r->datatype == 0)
+			yyerror("Expecting integer value for array index");
+	}
+	else if(t == 2) {
+		if(l->datatype == 0)
+			yyerror("Cannot write a boolean dataype");
+	}
+	else if(t == 4 || t == 5)
+		if(l->datatype != 0)
+			yyerror("Expecting boolean expression");
 	N->integer  = i;
 	N->right = r;
 	N->left = l;

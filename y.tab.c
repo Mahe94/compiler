@@ -515,7 +515,7 @@ static const yytype_uint8 yyrline[] =
       80,    81,    84,    94,    96,    99,   100,   102,   104,   107,
      110,   113,   117,   118,   119,   120,   121,   122,   123,   124,
      125,   126,   127,   128,   131,   132,   137,   138,   139,   140,
-     147,   148
+     144,   145
 };
 #endif
 
@@ -1465,7 +1465,7 @@ yyreduce:
 
   case 18:
 #line 105 "sim.y" /* yacc.c:1646  */
-    {(yyval.n) = nodeCreate(1, NULL, 0, (yyvsp[-5].n), NULL, (yyvsp[-3].n)); }
+    { (yyval.n) = nodeCreate(1, NULL, 0, (yyvsp[-5].n), NULL, (yyvsp[-3].n)); }
 #line 1470 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1597,30 +1597,27 @@ yyreduce:
 
   case 39:
 #line 140 "sim.y" /* yacc.c:1646  */
-    { if(Glookup((yyvsp[-3].n)->name)==NULL) 
-			  	yyerror(strcat((yyvsp[-3].n)->name, " has not being declared"));
-			  if((yyvsp[-1].n)->datatype == 0) 
-				yyerror("Expecting integer value for array index");
+    { 
 			  (yyval.n) = nodeCreate(8, (yyvsp[-3].n)->name, 0, (yyvsp[-1].n), NULL, NULL); 
 			  (yyval.n)->datatype = get_datatype((yyval.n));
 			}
-#line 1608 "y.tab.c" /* yacc.c:1646  */
+#line 1605 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 147 "sim.y" /* yacc.c:1646  */
+#line 144 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = (yyvsp[0].n);}
-#line 1614 "y.tab.c" /* yacc.c:1646  */
+#line 1611 "y.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 148 "sim.y" /* yacc.c:1646  */
+#line 145 "sim.y" /* yacc.c:1646  */
     { (yyval.n) = (yyvsp[0].n);}
-#line 1620 "y.tab.c" /* yacc.c:1646  */
+#line 1617 "y.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1624 "y.tab.c" /* yacc.c:1646  */
+#line 1621 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1848,7 +1845,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 151 "sim.y" /* yacc.c:1906  */
+#line 148 "sim.y" /* yacc.c:1906  */
      
 
 #include "lex.yy.c"
@@ -1899,12 +1896,13 @@ void Ginstall(char *N, int t, int s) {
 struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, struct node *r) {
 	struct node *N = (struct node*)malloc(sizeof(struct node));
 	N->type = t;
-	char error[100] = "Conflicting operands for operator ";
+	char error[100];
 	int err = 0;
 	if(n!=NULL) {
 		N->name = (char *)malloc(sizeof(n));
 		strcpy(N->name, n);
 		if(t != 7 && t != 9) {
+			strcpy(error, "Conflicting operands for operator ");
 			if(!strcmp(n, "+") || !strcmp(n, "-") || !strcmp(n, "*") || !strcmp(n, "/") || !strcmp(n, "%")) {
 				if(l->datatype != 1 || r->datatype != 1) 
 					err = 1;
@@ -1930,11 +1928,40 @@ struct node *nodeCreate(int t, char *n, int i, struct node *l, struct node *m, s
 					N->datatype = 0;	
 			}
 		}
+		if(t == 8) {
+			if(Glookup(n)==NULL) 
+			  	yyerror(strcat(n, " has not being declared"));
+			 if(l->datatype == 0) 
+				yyerror("Expecting integer value for array index");
+		}
+		if(err) {
+			strcat(error, n);
+			yyerror(error);
+		}
 	}
-	if(err) {
-		strcat(error, n);
-		yyerror(error);
+	else if(t == 3) {
+		if(Glookup(l->name) == NULL)
+			yyerror(strcat(m->name, " has not being declared"));
+		if(m != NULL && m->datatype == 0)
+			yyerror("Expecting integer value for array index");
+		if(l->datatype != r->datatype)
+			yyerror("Datatype mismatch");	 
 	}
+	else if(t ==1) {
+		if(Glookup(l->name) == NULL)
+			yyerror(strcat(l->name, " has not being declared"));
+		if(l->datatype == 0)
+			yyerror("Cannot read a boolean dataype");
+		if(r != NULL && r->datatype == 0)
+			yyerror("Expecting integer value for array index");
+	}
+	else if(t == 2) {
+		if(l->datatype == 0)
+			yyerror("Cannot write a boolean dataype");
+	}
+	else if(t == 4 || t == 5)
+		if(l->datatype != 0)
+			yyerror("Expecting boolean expression");
 	N->integer  = i;
 	N->right = r;
 	N->left = l;
